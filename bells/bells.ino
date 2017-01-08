@@ -1,4 +1,4 @@
-const int lockPin = LED_BUILTIN;
+const int lockPin = 12;
 const int bellPins[] = {3,4,5,6};
 const int code[] = {3,1,1,0,2,1};
 
@@ -15,11 +15,13 @@ for(int i =0; i<4;i++)
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }  
+  
+  digitalWrite(lockPin, LOW); 
 }
 
 void loop() {
   if(index==6){
-    blink();
+    bingo();
     index = 0;
   }
     
@@ -62,10 +64,10 @@ int getBell(){
   return -1;
 }
 
-void blink(){
-  Serial.print(" blink-blink ");
-  digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(2000);                       // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+void bingo(){
+  Serial.print(" bingo ");
+  digitalWrite(lockPin, HIGH);
+  delay(10000);
+  digitalWrite(lockPin, LOW);    
   delay(1000); 
 }
