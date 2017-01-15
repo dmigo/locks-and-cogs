@@ -2,6 +2,8 @@
 
 #include <ESP8266WiFi.h>
 
+const char* ssid = "";      // your network SSID (name)
+const char* pass = "";   // your network password
 int keyIndex = 0;                 
 
 WiFiServer server(80);
