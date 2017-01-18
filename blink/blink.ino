@@ -2,20 +2,27 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "";      // your network SSID (name)
-const char* pass = "";   // your network password
-int keyIndex = 0;                 
+const int ledPin = 5;
+const int btnPin = 4;
+int keyIndex = 0;
 
 WiFiServer server(80);
 
 void setup() {
-  pinMode(13, OUTPUT);
+  pinMode(ledPin, OUTPUT);
   
   Serial.begin(115200);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
+  startServer();
+}
+void loop() { 
+  serve();
+}
+
+void startServer(){
  // Connect to WiFi network
   Serial.println();
   Serial.println();
@@ -38,7 +45,8 @@ void setup() {
   // Print the IP address
   Serial.println(WiFi.localIP());
 }
-void loop() { 
+
+void serve(){
   WiFiClient client = server.available();
   if (!client) {
     return;
@@ -56,7 +64,6 @@ void loop() {
   client.flush();
   
   // Match the request
-  int val;
   if (req.indexOf("/blink") != -1)
     blink();
   else {
@@ -64,9 +71,6 @@ void loop() {
     client.stop();
     return;
   }
- 
-  // Set GPIO2 according to the request
-  digitalWrite(2, val);
   
   client.flush();
  
@@ -83,11 +87,10 @@ void loop() {
   // when the function returns and 'client' object is detroyed
 }
 
-
 void blink(){
-  digitalWrite(13, HIGH);
+  digitalWrite(ledPin, HIGH);
   delay(1000);
-  digitalWrite(13, LOW);
+  digitalWrite(ledPin, LOW);
   delay(1000);
   Serial.println("blink");  
 }
