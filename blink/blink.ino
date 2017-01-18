@@ -3,13 +3,15 @@
 #include <ESP8266WiFi.h>
 
 const int ledPin = 5;
-const int btnPin = 4;
+const int btnPin = 2;
+const char* host = "192.168.0.115";
 int keyIndex = 0;
 
 WiFiServer server(80);
 
 void setup() {
   pinMode(ledPin, OUTPUT);
+  pinMode(btnPin, INPUT_PULLUP);
   
   Serial.begin(115200);
   while (!Serial) {
@@ -18,8 +20,48 @@ void setup() {
 
   startServer();
 }
+
 void loop() { 
   serve();
+  
+  if(digitalRead(btnPin)==LOW){
+    request();
+    delay(500);
+  }
+}
+
+void request(){  
+  Serial.print("connecting to ");
+  Serial.println(host);
+  
+  // Use WiFiClient class to create TCP connections
+  WiFiClient client;
+  const int httpPort = 80;
+  if (!client.connect(host, httpPort)) {
+    Serial.println("connection failed");
+    return;
+  }
+  
+  // We now create a URI for the request
+  String url = "/blink";
+  
+  Serial.print("Requesting URL: ");
+  Serial.println(url);
+  
+  // This will send the request to the server
+  client.print(String("GET ") + url + " HTTP/1.1\r\n" +
+               "Host: " + host + "\r\n" + 
+               "Connection: close\r\n\r\n");
+  delay(10);
+  
+  // Read all the lines of the reply from server and print them to Serial
+  while(client.available()){
+    String line = client.readStringUntil('\r');
+    Serial.print(line);
+  }
+  
+  Serial.println();
+  Serial.println("closing connection");
 }
 
 void startServer(){
