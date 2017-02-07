@@ -1,49 +1,64 @@
-const int lockPin = 2;
+const int lockPin = 6;
+const int unlockPin = 7;
+const int lockDetectorPin = 8;
+
 const int motorPin = 12;
 const int motorLedPin = 11;
+
 const int off = HIGH;         
 const int on = LOW;         
+
 const int statePins[] = {3,4,5};
 const int powerPin = 9;
 bool isLocked = false;
 
 void setup() {
   pinMode(lockPin, OUTPUT);
+  pinMode(unlockPin, OUTPUT);
+  pinMode(lockDetectorPin, INPUT_PULLUP);
+  
   pinMode(motorPin, OUTPUT);
   pinMode(motorLedPin, OUTPUT);
 
   pinMode(statePins[0], INPUT_PULLUP);
   pinMode(statePins[1], INPUT_PULLUP);
   pinMode(statePins[2], INPUT_PULLUP);
+  
   pinMode(powerPin, INPUT_PULLUP);
   
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
+  }
+    
+  stopMotor();
+  lock();
+}
+
+void loop() {  
+  if(isButtonStart()){
+    if(!isLocked){
+      lock();
+    }
+    else {
+      startMotor();
+      delay(2000);
+      
+      bool isToBeUnlocked = getCogsState();
+      if (isToBeUnlocked) {
+        delay(8000);
+        unlock();
+        stopMotor();      
+        delay(10000);    
+      }
+      else
+        stopMotor(); 
+    }
   }  
 }
 
-void loop() {
-  stopMotor();
-  if(!isLocked){
-        lock();
-  }
-  
-  if(digitalRead(powerPin)==on){
-    startMotor();
-    delay(2000);
-    
-    bool isToBeUnlocked = getCogsState();
-    if (isToBeUnlocked) {
-      delay(8000);
-      unlock();
-      stopMotor();      
-      delay(10000);    
-    }
-    else
-      stopMotor();
-  }
-  
+bool isButtonStart(){
+  return digitalRead(powerPin) == on;
 }
 
 bool getCogsState(){
@@ -72,12 +87,14 @@ void stopMotor(){
 }
 
 void lock(){
+  while(digitalRead(lockDetectorPin) == off)
     digitalWrite(lockPin, on);
-    isLocked = true;
-    Serial.write("locked ");
+  isLocked = true;
+  Serial.write("locked ");
 }
 void unlock(){
-    digitalWrite(lockPin, off);
-    isLocked=false;
-    Serial.write("unlocked ");
+  while(digitalRead(lockDetectorPin) == on)
+    digitalWrite(unlockPin, on);
+  isLocked = false;
+  Serial.write("unlocked ");
 }
