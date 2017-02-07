@@ -8,7 +8,7 @@ const int motorLedPin = 11;
 const int off = HIGH;         
 const int on = LOW;         
 
-const int statePins[] = {3,4,5};
+const int statePins[] = {3, 4, 5};
 const int powerPin = 9;
 bool isLocked = false;
 
