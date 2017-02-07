@@ -85,14 +85,20 @@ void stopMotor(){
 }
 
 void lock(){
-  while(digitalRead(lockDetectorPin) == off)
+  while(digitalRead(lockDetectorPin) == off){
     digitalWrite(lockPin, on);
+    delay(500);
+    digitalWrite(lockPin, off);
+  }
   isLocked = true;
   Serial.write("locked ");
 }
 void unlock(){
-  while(digitalRead(lockDetectorPin) == on)
+  while(digitalRead(lockDetectorPin) == on){
     digitalWrite(unlockPin, on);
+    delay(500);
+    digitalWrite(unlockPin, off);
+  }
   isLocked = false;
   Serial.write("unlocked ");
 }
