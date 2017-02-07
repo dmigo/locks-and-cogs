@@ -47,12 +47,10 @@ void loop() {
       bool isToBeUnlocked = getCogsState();
       if (isToBeUnlocked) {
         delay(8000);
-        unlock();
-        stopMotor();      
-        delay(10000);    
+        unlock();    
       }
-      else
-        stopMotor(); 
+      
+      stopMotor(); 
     }
   }  
 }
@@ -77,13 +75,13 @@ bool getCogsState(){
 }
 
 void startMotor(){
-    digitalWrite(motorPin, on);
-    digitalWrite(motorLedPin, HIGH);
-    Serial.write("started ");  
+  digitalWrite(motorPin, on);
+  digitalWrite(motorLedPin, HIGH);
+  Serial.write("started ");  
 }
 void stopMotor(){
-    digitalWrite(motorPin, off);
-    digitalWrite(motorLedPin, LOW);
+  digitalWrite(motorPin, off);
+  digitalWrite(motorLedPin, LOW);
 }
 
 void lock(){
