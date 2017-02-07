@@ -2,6 +2,8 @@ const int lockPin = 12;
 const int bellPins[] = {3,4,5,6};
 const int code[] = {3,1,1,0,2,1};
 
+const unsigned long openDelay = 300000;//5*60*1000;
+
 int index = 0;
 bool down = false;
 
@@ -16,7 +18,7 @@ for(int i =0; i<4;i++)
     ; // wait for serial port to connect. Needed for native USB port only
   }  
   
-  digitalWrite(lockPin, LOW); 
+  digitalWrite(lockPin, HIGH); 
 }
 
 void loop() {
@@ -66,8 +68,8 @@ int getBell(){
 
 void bingo(){
   Serial.print(" bingo ");
-  digitalWrite(lockPin, HIGH);
-  delay(10000);
-  digitalWrite(lockPin, LOW);    
+  digitalWrite(lockPin, LOW);
+  delay(openDelay);
+  digitalWrite(lockPin, HIGH);    
   delay(1000); 
 }
