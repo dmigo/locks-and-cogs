@@ -30,7 +30,10 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
-    
+  
+  digitalWrite(lockPin, off);
+  digitalWrite(unlockPin, off);  
+
   stopMotor();
   lock();
 }
@@ -87,9 +90,9 @@ void stopMotor(){
 void lock(){
   while(digitalRead(lockDetectorPin) == off){
     digitalWrite(lockPin, on);
-    delay(200);
+    delay(20);
     digitalWrite(lockPin, off);
-    delay(500);
+    delay(80);
   }
   isLocked = true;
   Serial.write("locked ");
@@ -97,10 +100,10 @@ void lock(){
 void unlock(){
   while(digitalRead(lockDetectorPin) == on){
     digitalWrite(unlockPin, on);
-    delay(200);
+    delay(20);
     digitalWrite(unlockPin, off);
-    delay(500);
+    delay(80);
   }
-  isLocked = false;
+  isLocked = false;b
   Serial.write("unlocked ");
 }
