@@ -86,9 +86,9 @@ void stopMotor(){
 
 void lock(){
   while(digitalRead(lockDetectorPin) == off){
-    digitalWrite(lockPin, HIGH);
+    digitalWrite(lockPin, on);
     delay(500);
-    digitalWrite(lockPin, LOW);
+    digitalWrite(lockPin, off);
     delay(500);
   }
   isLocked = true;
@@ -96,9 +96,9 @@ void lock(){
 }
 void unlock(){
   while(digitalRead(lockDetectorPin) == on){
-    digitalWrite(unlockPin, HIGH);
+    digitalWrite(unlockPin, on);
     delay(500);
-    digitalWrite(unlockPin, LOW);
+    digitalWrite(unlockPin, off);
     delay(500);
   }
   isLocked = false;
