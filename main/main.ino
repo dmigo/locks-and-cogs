@@ -89,6 +89,7 @@ void lock(){
     digitalWrite(lockPin, HIGH);
     delay(500);
     digitalWrite(lockPin, LOW);
+    delay(500);
   }
   isLocked = true;
   Serial.write("locked ");
@@ -98,6 +99,7 @@ void unlock(){
     digitalWrite(unlockPin, HIGH);
     delay(500);
     digitalWrite(unlockPin, LOW);
+    delay(500);
   }
   isLocked = false;
   Serial.write("unlocked ");
