@@ -87,7 +87,7 @@ void stopMotor(){
 void lock(){
   while(digitalRead(lockDetectorPin) == off){
     digitalWrite(lockPin, on);
-    delay(500);
+    delay(200);
     digitalWrite(lockPin, off);
     delay(500);
   }
@@ -97,7 +97,7 @@ void lock(){
 void unlock(){
   while(digitalRead(lockDetectorPin) == on){
     digitalWrite(unlockPin, on);
-    delay(500);
+    delay(200);
     digitalWrite(unlockPin, off);
     delay(500);
   }
