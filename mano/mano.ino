@@ -3,11 +3,11 @@
 // | |/ / |_ \ |) | | (__ | ||   / (__| |_| || |  | | \__ \ 
 // |_/___|___/___/   \___|___|_|_\\___|\___/|___| |_| |___/ 
 // 
-// The Unnamed Circuit
+// Manometer
 // 
 // Made by Dmitry Goryunov
 // License: CC-BY-SA 3.0
-// Downloaded from: https://circuits.io/circuits/3956103-the-unnamed-circuit
+// Downloaded from: https://circuits.io/circuits/3956103-manometer
 
 #include <Servo.h>
 
@@ -20,9 +20,12 @@ const int trembleCount = 10;
 int trembles[trembleCount] = {110,80,105,80,100,85,100,85,105,90};
 const int trembleDelay = 300;
 
+const int ledPin = 9;
+
 Servo servo;
 
 void setup(){
+ 	pinMode(ledPin, OUTPUT);
 	servo.attach(servoPin);
 }
 
@@ -31,8 +34,10 @@ void moveToStart(){
   delay(positionDelay);
 }
 void moveToEnd(){
+  digitalWrite(ledPin, HIGH);           
   servo.write(positionEnd);
-  delay(positionDelay);
+  delay(positionDelay);  
+  digitalWrite(ledPin, LOW); 
 }
 void tremble(){
   for(int i =0; i< trembleCount; i++){
