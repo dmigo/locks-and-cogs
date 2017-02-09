@@ -32,8 +32,7 @@ void setup() {
   }
   
   digitalWrite(lockPin, off);
-  digitalWrite(unlockPin, off);  
-
+  digitalWrite(unlockPin, off);
   stopMotor();
   lock();
 }
@@ -88,22 +87,22 @@ void stopMotor(){
 }
 
 void lock(){
-  while(digitalRead(lockDetectorPin) == off){
+  do{
     digitalWrite(lockPin, on);
     delay(20);
     digitalWrite(lockPin, off);
     delay(80);
-  }
+  }while(digitalRead(lockDetectorPin) == off);
   isLocked = true;
   Serial.write("locked ");
 }
 void unlock(){
-  while(digitalRead(lockDetectorPin) == on){
+  do{
     digitalWrite(unlockPin, on);
     delay(20);
     digitalWrite(unlockPin, off);
     delay(80);
-  }
-  isLocked = false;b
+  }while(digitalRead(lockDetectorPin) == on);
+  isLocked = false;
   Serial.write("unlocked ");
 }
