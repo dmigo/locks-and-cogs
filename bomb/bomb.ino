@@ -104,15 +104,20 @@ void listenKey(){
   
   nextKey = false;
   
+  Serial.print('[');
   Serial.print(keypressed);
   
   if(keypressed == combi[combindex])
     combindex++;
   else
     combindex = 0;
+  Serial.print(':');
+  Serial.print(combindex);
   
   if(combindex == combilen)
-    disarmed = true;  
+    disarmed = true;
+  
+  Serial.print(']');
 }
 
 void beep(){
