@@ -40,6 +40,7 @@ const int buzzerPin = 10;
 
 bool nextKey = false;
 bool disarmed = false;
+bool exploded = false;
 const int combilen = 5;
 char combi [combilen] = {'3','2','1','6','7'};
 int combindex = 0;
@@ -57,8 +58,13 @@ void setup() {
 }
 
 void loop() {
-  if(time<0 || disarmed)
+  if(exploded || disarmed)
     return;
+  
+  if(time<=0){
+  	loose();
+    return;
+  }
   
   tickTock();
   checkEvents();
@@ -115,7 +121,7 @@ void listenKey(){
   Serial.print(combindex);
   
   if(combindex == combilen)
-    disarmed = true;
+    win();
   
   Serial.print(']');
 }
@@ -143,4 +149,13 @@ void printTime(){
   if(secs/10==0)
   	lcd.print("0"); 
   lcd.print(secs);
+}
+
+void win(){
+  //todo play melody
+  disarmed = true;
+}
+void loose(){
+  //todo play melody
+  exploded = true;
 }
