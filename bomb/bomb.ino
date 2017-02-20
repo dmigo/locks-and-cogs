@@ -105,6 +105,10 @@
 
 #define NOTE_SUSTAIN 250
 
+/*************************************************
+ * Notes
+ *************************************************/
+
 #include <LiquidCrystal.h>
 #include <Keypad.h>
 
@@ -137,6 +141,7 @@ const int buzzerPin = 10;
 bool nextKey = false;
 bool disarmed = false;
 bool exploded = false;
+int attempts = 3;
 const int combilen = 5;
 char combi [combilen] = {'3','2','1','6','7'};
 int combindex = 0;
@@ -206,13 +211,16 @@ void listenKey(){
   
   nextKey = false;
   
-  Serial.print('[');
-  Serial.print(keypressed);
-  
   if(keypressed == combi[combindex])
     combindex++;
   else
+  {
     combindex = 0;
+    attemptFailed();
+  }
+  
+  Serial.print('[');
+  Serial.print(keypressed);
   Serial.print(':');
   Serial.print(combindex);
   
@@ -220,6 +228,20 @@ void listenKey(){
     win();
   
   Serial.print(']');
+}
+
+void attemptFailed(){
+  attempts-=1;
+  Serial.print("<Attempts: ");
+  Serial.print(attempts);
+  Serial.print(">");
+  Serial.println("");
+  if(attempts ==0)
+    loose();
+  else{
+    unbeep = time - 2;
+    beep();
+  }
 }
 
 void beep(){
