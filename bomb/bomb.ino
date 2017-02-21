@@ -130,8 +130,8 @@ const int totalTime = 3600; // in decisecs
 int time = totalTime;
 bool tick = false;
 
-//3600, 3300, 3000, 2700, 2400, 2100, 1800, 1500, 1200, 900, 600, 300, 30, 20, 10
-int beeps [] = { 3600, 3300, 3000, 2700, 2400, 2100, 1800, 1500, 1200, 900, 600, 300, 30, 20, 10 };
+int beepterval = 30;
+int nextBeep = totalTime-beepterval;
 int ibeep = 0;
 int unbeep = 0;
 bool beeping = false;
@@ -173,7 +173,7 @@ void loop() {
 }
 
 void tickTock(){
-	int out = millis() / 100;
+  int out = millis() / 100;
   int newTime = totalTime - out;
   tick = newTime != time;
   time = newTime;
@@ -182,17 +182,17 @@ void tickTock(){
 void checkEvents(){
   if(!tick)
     return;
-    
-	if(time <= beeps[ibeep])
-    {
-      ibeep++;
-      unbeep = time - 1;
-      beep();
-    }
-	if(time <= unbeep && beeping)
-    {
-      dontbeep();
-    }
+
+  if(time <= nextBeep)
+  {
+    nextBeep = time - beepterval;
+    unbeep = time - 1;
+    beep();
+  }
+  if(time <= unbeep && beeping)
+  {
+    dontbeep();
+  }
   
   printTime();
 }
@@ -204,7 +204,7 @@ void listenKey(){
   {
     nextKey = true;
     return;
-	}
+  }
   
   if(!nextKey)
     return;
