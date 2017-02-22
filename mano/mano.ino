@@ -11,43 +11,86 @@
 
 #include <Servo.h>
 
-const int servoPin = 10;
-const int positionStart = 0;
-const int positionEnd = 180;
-const int positionDelay = 2000;
+bool done = false;
 
-const int trembleCount = 10;
-int trembles[trembleCount] = {110,80,105,80,100,85,100,85,105,90};
-const int trembleDelay = 300;
+const int switches[] = {A1,A2,A3,A4};
+const int relays[] = {2,3,4, 7,8, 10, 11};
 
-const int ledPin = 9;
+const int servoPin = 5;
+const int servoStart = 10;
+const int servoEnd = 200;
+const int servoStep = 1;
+const int servoSpan = 100;
+int servoState = 0;
+
 
 Servo servo;
 
 void setup(){
- 	pinMode(ledPin, OUTPUT);
-	servo.attach(servoPin);
+  for(int i = 0; i<4; i++)
+    pinMode(switches[i], INPUT_PULLUP);
+    
+  for(int i = 0; i<7; i++){
+    pinMode(relays[i], INPUT_PULLUP);
+    digitalWrite(relays[i], LOW);    
+  }
+  
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }  
+  
+  servo.attach(servoPin);
+  moveTo(servoStart);
 }
 
-void moveToStart(){
-  servo.write(positionStart);
-  delay(positionDelay);
+void moveTo(int newState){
+  servo.write(newState);
+  servoState = newState;
 }
-void moveToEnd(){
-  digitalWrite(ledPin, HIGH);           
-  servo.write(positionEnd);
-  delay(positionDelay);  
-  digitalWrite(ledPin, LOW); 
-}
-void tremble(){
-  for(int i =0; i< trembleCount; i++){
-    servo.write(trembles[i]);
-    delay(trembleDelay);
+
+void phase1(){
+  digitalWrite(relays[0], HIGH);
+  digitalWrite(relays[1], HIGH);
+  digitalWrite(relays[2], HIGH);
+
+  while(servoState < servoEnd){
+    moveTo(servoState + servoStep);
+    delay(servoSpan);    
   }
+}
+void phase2(){
+  digitalWrite(relays[3], HIGH);
+  digitalWrite(relays[4], HIGH);
+  moveTo(servoStart);  
+}
+void phase3(){
+  int time = random(1000, 5000);
+  delay(time);
+  digitalWrite(relays[5], HIGH);
+}
+void phase4(){
+  int time = random(1000, 5000);
+  delay(time);
+  digitalWrite(relays[6], HIGH);  
+}
+
+bool isSolved(){
+  bool result = true;
+  for(int i = 0; i<4; i++){
+    result = result 
+      && digitalRead(switches[i]) == LOW;
+  }
+  return result;
 }
 
 void loop(){
-  moveToStart();
-  tremble();
-  moveToEnd();
+  if(isSolved() && !done){
+    phase1();
+    phase2();
+    phase3();
+    phase4();
+
+    done = true;
+  }
 }
