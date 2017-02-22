@@ -117,14 +117,14 @@ const byte numCols= 4;
 
 char keymap[numRows][numCols]= 
 {
-{'1', '2', '3', 'A'}, 
-{'4', '5', '6', 'B'}, 
-{'7', '8', '9', 'C'},
-{'*', '0', '#', 'D'}
+{'1', '2', '3'}, 
+{'4', '5', '6'}, 
+{'7', '8', '9'},
+{'*', '0', '#'}
 };
 
 byte rowPins[numRows] = {6,7,8,9};
-byte colPins[numCols]= {A0,A1,A2,A3}; 
+byte colPins[numCols]= {A1,A2,A3}; // тут меньше столбцов
 
 const int totalTime = 3600; // in decisecs
 int time = totalTime;
@@ -141,9 +141,9 @@ const int buzzerPin = 10;
 bool nextKey = false;
 bool disarmed = false;
 bool exploded = false;
-int attempts = 3;
-const int combilen = 5;
-char combi [combilen] = {'3','2','1','6','7'};
+int attempts = 6;//после введения неправильных 6 символов "ошибка"
+const int combilen = 6;//6 цифр - код.
+char combi [combilen] = {'5','1','3','9','2','4'}; //правильный код
 int combindex = 0;
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
@@ -223,7 +223,8 @@ void listenKey(){
   Serial.print(keypressed);
   Serial.print(':');
   Serial.print(combindex);
-  
+   tone(10, 800, 100); //пищим при любом нажатии (тон меняем немного чтоб было отличие с постоянным
+	
   if(combindex == combilen)
     win();
   
@@ -236,8 +237,14 @@ void attemptFailed(){
   Serial.print(attempts);
   Serial.print(">");
   Serial.println("");
-  if(attempts ==0)
-    loose();
+  if(attempts ==0){
+      tone(buzzerPin,NOTE_G4);
+    delay(250);
+    tone(buzzerPin,NOTE_C4);
+    delay(500);
+    noTone(buzzerPin);
+    attempts = 6;
+  }          //люди не любят быть неудачниками, но тактично напомним об этом.
   else{
     unbeep = time - 2;
     beep();
