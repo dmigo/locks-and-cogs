@@ -20,7 +20,7 @@ const int servoPin = 5;
 const int servoStart = 10;
 const int servoEnd = 200;
 const int servoStep = 1;
-const int servoSpan = 100;
+const int servoSpan = 1000;
 int servoState = 0;
 
 
