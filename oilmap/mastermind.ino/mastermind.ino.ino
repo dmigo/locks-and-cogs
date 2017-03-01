@@ -20,18 +20,18 @@
 #include <Wire.h>
 
 //{wellId, marketId, storageId,}
-int nodes [][] = {
+int nodes [3][3] = {
   {-1, -1, 0},
   {-1, -1, 1},
   {-1, -1, 2},
 };
 
-int wells [][] ={
+int wells [2][0] ={
   {},
   {},  
 };
 
-int markets [][] ={
+int markets [2][0] ={
   {},
   {},  
 };
@@ -44,9 +44,9 @@ int storages [3][2] ={
 };
 
 //{isActive, address, speed, from, to}
-int pipesCount = 2;
-int pipes [pipesCount][5] ={
-  {INACTIVE, 7, 0, 2000, 0, 1},
+const int pipesCount = 2;
+int pipes [pipesCount][6] = {
+  {ACTIVE, 7, 0, 2, 0, 1},
   {INACTIVE, 8, 0, 500, 1, 2}
 };
 
@@ -76,7 +76,74 @@ void deactivatePipe(int index){
 }
 
 void pump(int from, int to, int speed){
-  
+
+Serial.println();
+Serial.print("speed: ");
+Serial.print(speed);
+Serial.print(" [");
+
+  int toTransfer = 0;
+  if(nodes[from][WELLID]>=0){
+    //TODO implement well   
+    Serial.print("well");
+  }
+  if(nodes[from][MARKETID]>=0){
+    Serial.print("market");
+    //TODO implement market
+  }
+  if(nodes[from][STORAGEID]>=0){
+    Serial.print("storage ");
+    int index = nodes[from][STORAGEID];
+    int content = storages[index][CONTENT];
+    
+    Serial.print(index);
+    Serial.print(":(");
+    Serial.print(content);
+    Serial.print(")] >>");
+
+    if(content < speed)
+      toTransfer = content;
+    if(content >= speed)
+      toTransfer = speed;
+    
+    Serial.print("try: ");
+    Serial.print(toTransfer);
+    Serial.print(">> to [");
+    
+    if(nodes[to][WELLID]>=0){ 
+      //TODO implement well
+      Serial.print("well");
+    }
+    if(nodes[to][MARKETID]>=0){
+      //TODO implement market
+      Serial.print("market");
+    }
+    if(nodes[to][STORAGEID]>=0){
+      int toindex = nodes[to][STORAGEID];
+      int capacity = storages[toindex][CAPACITY];
+      int content = storages[toindex][CONTENT];
+      int available = capacity - content;
+
+      if(available <= toTransfer)
+        toTransfer = available;
+      
+      Serial.print("storage ");
+      Serial.print(toindex);
+      Serial.print(":(");
+      Serial.print(content);
+      Serial.print("/");
+      Serial.print(capacity);
+      Serial.print(")] ");
+      
+      storages[toindex][CONTENT] += toTransfer;
+    }
+
+    Serial.print("actual: ");
+    Serial.println(toTransfer);
+      
+    storages[index][CONTENT] -= toTransfer;
+  }
+    
 }
 
 //=== PIPES ===//
@@ -91,8 +158,8 @@ void loop() {
 int seconds = 0;
 bool tick = false;
 
-void dotick(){
-  var newTime = millis() / 1000;
+void doTick(){
+  int newTime = millis() / 1000;
   if(newTime - seconds >= DAY)
   {
       tick = true;
@@ -102,13 +169,13 @@ void dotick(){
 
 void doTock(){
   if(tick){
-    for(int i = 0; i < pipesCount;
+    for(int i = 0; i < pipesCount; i++)
     {
       if(pipes[i][IS_ACTIVE] == ACTIVE)
-        pump(pipes[i][FROM],pipes[i][TO], pipes[SPEED]);
+        pump(pipes[i][FROM],pipes[i][TO], pipes[i][SPEED]);
         
       if(pipes[i][IS_ACTIVE] == -ACTIVE)
-        pump(pipes[i][TO],pipes[i][FROM], pipes[SPEED]);
+        pump(pipes[i][TO],pipes[i][FROM], pipes[i][SPEED]);
     }
     //ToDo do stuff
     tick = false;
