@@ -17,8 +17,8 @@ const int switches[] = {A1,A2,A3,A4};
 const int relays[] = {2,3,4, 7,8, 10, 11};
 
 const int servoPin = 5;
-const int servoStart = 10;
-const int servoEnd = 200;
+const int servoStart = 50;
+const int servoEnd = 93;
 const int servoStep = 1;
 const int servoSpan = 1000;
 int servoState = 0;
