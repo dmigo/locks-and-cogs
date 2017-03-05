@@ -31,7 +31,7 @@ void setup(){
     pinMode(switches[i], INPUT_PULLUP);
     
   for(int i = 0; i<7; i++){
-    pinMode(relays[i], INPUT_PULLUP);
+    pinMode(relays[i], OUTPUT);//по другому нельзя с реле
     digitalWrite(relays[i], LOW);    
   }
   
