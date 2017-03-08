@@ -18,7 +18,7 @@ for(int i =0; i<4;i++)
     ; // wait for serial port to connect. Needed for native USB port only
   }  
   
-  digitalWrite(lockPin, HIGH); 
+  digitalWrite(lockPin, LOW); 
 }
 
 void loop() {
@@ -68,8 +68,8 @@ int getBell(){
 
 void bingo(){
   Serial.print(" bingo ");
-  digitalWrite(lockPin, LOW);
+  digitalWrite(lockPin, HIGH);
   delay(openDelay);
-  digitalWrite(lockPin, HIGH);    
+  digitalWrite(lockPin, LOW);    
   delay(1000); 
 }
