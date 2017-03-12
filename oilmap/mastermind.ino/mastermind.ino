@@ -44,7 +44,7 @@ int storages [3][2] ={
 
 //{progress, address, delay, from, to, content, target}
 const int pipesCount = 2;
-int pipes [pipesCount][6] = {
+int pipes [pipesCount][8] = {
   {0, 7, 0, 2, 0, 1, 0, 0},
   {0, 8, 0, 3, 1, 2, 0, 0}
 };
