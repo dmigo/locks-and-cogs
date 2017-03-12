@@ -18,11 +18,11 @@
 
 #include <Wire.h>
 
-//{wellId, marketId, storageId,}
+//{wellId, marketId, storageId, pipe 1, pipe 2, pipe 3}
 int nodes [3][3] = {
-  {-1, -1, 0},
-  {-1, -1, 1},
-  {-1, -1, 2},
+  {-1, -1, 0, 0, -1, -1},
+  {-1, -1, 1, 0, 1, -1},
+  {-1, -1, 2, 1, -1, -1},
 };
 
 int wells [2][0] ={
@@ -63,7 +63,7 @@ void send(int index, int quantity, bool reverse){
     
   Wire.beginTransmission(pipes[index][ADDRESS]);
   Wire.write(pipes[index][TARGET]);
-  Wire.write(1);
+  Wire.write(1);//ToDo consider reverse
   Wire.endTransmission();
 
   spend(pipes[index][FROM], pipes[index][CONTENT]);//ToDo consider reverse
