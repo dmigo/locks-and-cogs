@@ -1,15 +1,14 @@
-#define INACTIVE 0 
-#define ACTIVE 1 
-
 #define CONTENT 0 
 #define CAPACITY 1 
 
-#define IS_ACTIVE 0 
+#define PROGRESS 0 
 #define ADDRESS 1  
 #define ADDRESS_ADD 2 
-#define SPEED 3 
+#define DELAY 3 
 #define FROM 4 
 #define TO 5
+#define CONTENT 6
+#define TARGET 7
 
 #define WELLID 0
 #define MARKETID 1
@@ -43,11 +42,11 @@ int storages [3][2] ={
   {50, 300},
 };
 
-//{isActive, address, speed, from, to}
+//{progress, address, delay, from, to, content, target}
 const int pipesCount = 2;
 int pipes [pipesCount][6] = {
-  {ACTIVE, 7, 0, 2, 0, 1},
-  {INACTIVE, 8, 0, 500, 1, 2}
+  {0, 7, 0, 2, 0, 1, 0, 0},
+  {0, 8, 0, 3, 1, 2, 0, 0}
 };
 
 void setup() {
@@ -55,97 +54,86 @@ void setup() {
 }
 
 //=== PIPES ===//
-void activatePipe(int index){
-  int speed = pipes[index][SPEED];
-  
-  pipes[index][IS_ACTIVE] = ACTIVE;//ToDo set -ACTIVE for reverse
+void send(int index, int quantity, bool reverse){
+  if(pipes[index][PROGRESS] != 0)
+    return;
+
+  pipes[index][PROGRESS] = pipes[index][DELAY];
+  pipes[index][CONTENT] = quantity;//ToDo consider reverse
     
   Wire.beginTransmission(pipes[index][ADDRESS]);
-  Wire.write(speed);
-  Wire.write(speed>>8);
-  Wire.endTransmission();  
+  Wire.write(pipes[index][TARGET]);
+  Wire.write(1);
+  Wire.endTransmission();
+
+  spend(pipes[index][FROM], pipes[index][CONTENT]);//ToDo consider reverse
+  //ToDo consider not complete quantity
 }
 
-void deactivatePipe(int index){
+void pump(int index){
+  Serial.println();
+  Serial.print("[pipe ");
+  Serial.print(index);
+  Serial.print("] ");
+  Serial.print(pipes[index][PROGRESS]);
+  pipes[index][PROGRESS]-=1;
+  Serial.print("-->");
+  Serial.print(pipes[index][PROGRESS]);
+  
+  if(pipes[index][PROGRESS] == 0)
+    receive(index);//ToDo consider reverse
+}
+
+void receive(int index){
   pipes[index][IS_ACTIVE] = INACTIVE;
   
   Wire.beginTransmission(pipes[index][ADDRESS]);
-  Wire.write(0);
+  Wire.write(pipes[index][TARGET]);
   Wire.write(0);
   Wire.endTransmission();
+
+  obtain(pipes[index][TO], pipes[index][CONTENT]);//ToDo consider reverse
 }
 
-void pump(int from, int to, int speed){
-
-Serial.println();
-Serial.print("speed: ");
-Serial.print(speed);
-Serial.print(" [");
-
-  int toTransfer = 0;
-  if(nodes[from][WELLID]>=0){
+void spend(int object, int quantity){
+  Serial.println();
+  if(nodes[object][WELLID]>=0){
     //TODO implement well   
     Serial.print("well");
   }
-  if(nodes[from][MARKETID]>=0){
+  if(nodes[object][MARKETID]>=0){
     Serial.print("market");
     //TODO implement market
   }
-  if(nodes[from][STORAGEID]>=0){
-    Serial.print("storage ");
+  if(nodes[object][STORAGEID]>=0){
+    Serial.print("[storage ");
     int index = nodes[from][STORAGEID];
-    int content = storages[index][CONTENT];
-    
     Serial.print(index);
-    Serial.print(":(");
-    Serial.print(content);
-    Serial.print(")] >>");
-
-    if(content < speed)
-      toTransfer = content;
-    if(content >= speed)
-      toTransfer = speed;
-    
-    Serial.print("try: ");
-    Serial.print(toTransfer);
-    Serial.print(">> to [");
-    
-    if(nodes[to][WELLID]>=0){ 
-      //TODO implement well
-      Serial.print("well");
-    }
-    if(nodes[to][MARKETID]>=0){
-      //TODO implement market
-      Serial.print("market");
-    }
-    if(nodes[to][STORAGEID]>=0){
-      int toindex = nodes[to][STORAGEID];
-      int capacity = storages[toindex][CAPACITY];
-      int content = storages[toindex][CONTENT];
-      int available = capacity - content;
-
-      if(available <= toTransfer)
-        toTransfer = available;
-      
-      Serial.print("storage ");
-      Serial.print(toindex);
-      Serial.print(":(");
-      Serial.print(content);
-      Serial.print("/");
-      Serial.print(capacity);
-      Serial.print(")] ");
-      
-      storages[toindex][CONTENT] += toTransfer;
-    }
-
-    Serial.print("actual: ");
-    Serial.println(toTransfer);
-      
-    storages[index][CONTENT] -= toTransfer;
+    Serial.print("] -- ")
+    storages[index][CONTENT] -= quantity;
+    Serial.print(quantity);
   }
-    
 }
 
+void obtain(int object, int quantity){
+   Serial.println();
+  if(nodes[object][WELLID]>=0){
+    //TODO implement well   
+    Serial.print("well");
+  }
+  if(nodes[object][MARKETID]>=0){
+    Serial.print("market");
+    //TODO implement market
+  }
+  if(nodes[object][STORAGEID]>=0){
+    Serial.print("[storage ");
+    int index = nodes[from][STORAGEID];
+    Serial.print(index);
+    Serial.print("] ++ ")
+    storages[index][CONTENT] += quantity;
+    Serial.print(quantity);
+  }
+}
 //=== PIPES ===//
 
 void loop() {
@@ -171,11 +159,9 @@ void doTock(){
   if(tick){
     for(int i = 0; i < pipesCount; i++)
     {
-      if(pipes[i][IS_ACTIVE] == ACTIVE)
-        pump(pipes[i][FROM],pipes[i][TO], pipes[i][SPEED]);
-        
-      if(pipes[i][IS_ACTIVE] == -ACTIVE)
-        pump(pipes[i][TO],pipes[i][FROM], pipes[i][SPEED]);
+      if(pipes[i][PROGRESS] > 0){
+          pump(i);
+      }
     }
     //ToDo do stuff
     tick = false;
