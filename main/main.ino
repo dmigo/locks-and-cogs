@@ -2,6 +2,8 @@ const int lockPin = 6;
 const int unlockPin = 7;
 const int lockDetectorPin = 8;
 
+const int openBtnPin = 13;
+
 const int motorPin = 12;
 const int motorLedPin = 11;
 
@@ -16,6 +18,8 @@ void setup() {
   pinMode(lockPin, OUTPUT);
   pinMode(unlockPin, OUTPUT);
   pinMode(lockDetectorPin, INPUT_PULLUP);
+  
+  pinMode(openBtnPin, INPUT_PULLUP);
   
   pinMode(motorPin, OUTPUT);
   pinMode(motorLedPin, OUTPUT);
@@ -38,6 +42,10 @@ void setup() {
 }
 
 void loop() {  
+  if(masterButton()){
+    unlock();    
+  }
+  
   if(isButtonStart()){
     if(!isLocked){
       lock();
@@ -57,6 +65,10 @@ void loop() {
       }
     }
   }  
+}
+
+bool masterButton(){
+  return digitalRead(openBtnPin) == on;
 }
 
 bool isButtonStart(){
