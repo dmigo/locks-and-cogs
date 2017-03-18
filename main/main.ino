@@ -38,14 +38,12 @@ void setup() {
   digitalWrite(lockPin, off);
   digitalWrite(unlockPin, off);
   stopMotor();
-  lock();
+  unlock();
+  delay(5000);
+  lock();   
 }
 
 void loop() {  
-  if(masterButton()){
-    unlock();    
-  }
-  
   if(isButtonStart()){
     if(!isLocked){
       lock();
