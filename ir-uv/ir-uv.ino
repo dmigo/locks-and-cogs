@@ -66,7 +66,7 @@ int getButton(){
 void next1(){
     irdrop(sequence1[index1]);
     uvblink(sequence1[index1]);
-  	index1++;
+    index1++;
         
     if(index1 == slength1)
       win1();
@@ -94,7 +94,7 @@ int irleds2[length2] = {A0, A2, A4};//список ик
 
 int index2 = 0;
 const int slength2 = 3;//длинна правильной последовательности
-int sequence2[slength2, 2] = {{0,1}, {0,2}, {1,2}};//правильная последовательность
+int sequence2[slength2][2] = {{0,1}, {0,2}, {1,2}};//правильная последовательность
 
 void start2(){
   Serial.println("[Starting the second game]");
@@ -123,7 +123,7 @@ void irdrop2(int i){
   Serial.println(" is down]");
 }
 
-void printState2(int i, int[] expected, int[] actual){
+void printState2(int i, int expected[], int actual[]){
   Serial.print("[index1: ");
   Serial.print(i);
   Serial.print(" expected: ");
@@ -137,8 +137,9 @@ void printState2(int i, int[] expected, int[] actual){
   Serial.println("]");
 }
 
-int[] getButtons2(){
-    int[2] result = {-1, -1};
+void getButtons2(int result[]){
+    result[0] = -1;
+    result[1] = -1;
     int j=0;
 
   for(int i=0; i<length2; i++){
@@ -149,18 +150,16 @@ int[] getButtons2(){
         }
     }
   }
-
-  return j;
 }
 
-bool match2(int[] expected, int[] actual){
+bool match2(int expected[], int actual[]){
     return (expected[0] == actual[0] && expected[1] == actual[1])
         || (expected[0] == actual[1] && expected[1] == actual[0]);
 }
 
 void next2(){
     irdrop2(sequence2[index2]);
-  	index2++;
+    index2++;
         
     if(index2 == slength2)
       win2();
@@ -185,14 +184,14 @@ void setup() {
   }  
   
   for(int i = 0; i<length1; i++){
-  	pinMode(irleds1[i], OUTPUT);
-  	pinMode(uvleds1[i], OUTPUT);
-  	pinMode(buttons1[i], INPUT_PULLUP);
+    pinMode(irleds1[i], OUTPUT);
+    pinMode(uvleds1[i], OUTPUT);
+    pinMode(buttons1[i], INPUT_PULLUP);
   }
   start1();
   for(int i = 0; i<length2; i++){
-  	pinMode(irleds2[i], OUTPUT);
-  	pinMode(buttons2[i], INPUT_PULLUP);
+    pinMode(irleds2[i], OUTPUT);
+    pinMode(buttons2[i], INPUT_PULLUP);
   }
 }
 
@@ -211,10 +210,11 @@ void loop() {
         }
     }
     else{        
-        int desired = sequence2[index2];
-        int pressed = getButtons2();
+        int desired[2] = {sequence2[index2][0], sequence2[index2][0]};
+        int pressed[2] = {-1,-1};
+        getButtons2(pressed);
             
-        if(match2(desired, pressed){
+        if(match2(desired, pressed)){
             printState2(index2, desired, pressed);
             next2();
         }
