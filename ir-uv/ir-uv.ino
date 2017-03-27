@@ -98,6 +98,8 @@ bool match2(int expected[], int actual[]){
 void next2(){
     irdrop(sequence2[index2][0]);
     irdrop(sequence2[index2][1]);
+    uvblink(sequence2[index2][0]);
+    uvblink(sequence2[index2][1]);
     index2++;
         
     if(index2 == slength2)
