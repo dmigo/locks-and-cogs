@@ -1,17 +1,21 @@
 
-//=== задача 1
 #define UV_DELAY 1000 //задержка ультрафиолета в миллисекундах
 
-bool won1 = false;
+const int length = 6;//количество кнопок
+int buttons[length] = {12, 9, 6, 13, A1, A3};//список кнопок
+int irleds[length] = {11, 8, 5, A0, A2, A4};//список ик
+int uvleds[length] = {10, 7, 4, 3, 2, 0};//список ультрафиолеток
 
-const int length1 = 3;//количество кнопок
-int buttons1[length1] = {12, 9, 6};//список кнопок
-int irleds1[length1] = {11, 8, 5};//список ик
-int uvleds1[length1] = {10, 7, 4};//список ультрафиолеток
+int relays[2] = {A5, 1};// релешки
+
+
+//=== задача 1
+
+bool won1 = false;// победа в первом раунде
 
 int index1 = 0;
-const int slength1 = 3;//длинна правильной последовательности
-int sequence1[slength1] = {0, 1, 2};//правильная последовательность
+const int slength1 = 6;//длинна правильной последовательности
+int sequence1[slength1] = {5, 4, 3, 2, 1, 0};//правильная последовательность
 
 void start1(){
   Serial.println("[Starting the first game]");
@@ -86,12 +90,7 @@ void lose1(){
 
 //=== задача 2
 
-bool won2 = false;
-
-const int length2 = 3;//количество кнопок
-int buttons2[length2] = {13, A1, A3};//список кнопок
-int irleds2[length2] = {A0, A2, A4};//список ик
-
+bool won2 = false;// победа во втором раунде
 int index2 = 0;
 const int slength2 = 3;//длинна правильной последовательности
 int sequence2[slength2][2] = {{0,1}, {0,2}, {1,2}};//правильная последовательность
@@ -101,15 +100,17 @@ void start2(){
   index2 = 0;
   won2 = false;
   
-  for(int i = 0; i<length2; i++)
+  for(int i = 0; i<length2; i++){
     irdrop2(i);
+  }
   
-  irup2(sequence2[index2]);
+  irup2(sequence2[index2][0]);
+  irup2(sequence2[index2][1]);
 }
 
 void irup2(int i){
   int pin = irleds2[i];
-  digitalWrite(irleds2[i], HIGH);
+  digitalWrite(pin, HIGH);
   Serial.print("[ir ");
   Serial.print(pin);
   Serial.println(" is up]");
@@ -117,10 +118,10 @@ void irup2(int i){
 
 void irdrop2(int i){
   int pin = irleds2[i];
-  digitalWrite(irleds2[i], LOW);
+  digitalWrite(pin, LOW);
   Serial.print("[ir ");
   Serial.print(pin);
-  Serial.println(" is down]");
+  Serial.println(" is up]");
 }
 
 void printState2(int i, int expected[], int actual[]){
@@ -158,13 +159,16 @@ bool match2(int expected[], int actual[]){
 }
 
 void next2(){
-    irdrop2(sequence2[index2]);
+    irdrop2(sequence2[index2][0]);
+    irdrop2(sequence2[index2][1]);
     index2++;
         
     if(index2 == slength2)
       win2();
-    else
-      irup2(sequence2[index2]);
+    else{
+      irup2(sequence2[index2][0]);
+      irup2(sequence2[index2][1]);
+    }
 }
 
 void win2(){
@@ -218,7 +222,7 @@ void loop() {
             printState2(index2, desired, pressed);
             next2();
         }
-        else if(pressed != -1){
+        else if(pressed[0] != -1 && pressed[1] != -1){
             printState2(index2, desired, pressed);
             lose2();
         }
