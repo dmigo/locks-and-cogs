@@ -100,8 +100,7 @@ bool match2(int expected[], int actual[]){
 void next2(){
     irdrop(sequence2[index2][0]);
     irdrop(sequence2[index2][1]);
-    uvblink(sequence2[index2][0]);
-    uvblink(sequence2[index2][1]);
+    uvsblink(sequence2[index2][0], sequence2[index2][1]);
     index2++;
         
     if(index2 == slength2)
@@ -181,6 +180,14 @@ void uvblink(int i){
   digitalWrite(uvleds[i], HIGH);
   delay(UV_DELAY);
   digitalWrite(uvleds[i], LOW);
+}
+
+void uvsblink(int i, int j){
+  digitalWrite(uvleds[i], HIGH);
+  digitalWrite(uvleds[j], HIGH);
+  delay(UV_DELAY);
+  digitalWrite(uvleds[i], LOW);
+  digitalWrite(uvleds[j], LOW);
 }
 
 void setup() {  
