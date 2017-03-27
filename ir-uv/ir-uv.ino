@@ -29,25 +29,25 @@ void start1(){
 }
 
 void irdrop(int i){
-  int pin = irleds1[i];
-  digitalWrite(irleds1[i], LOW);
+  int pin = irleds[i];
+  digitalWrite(irleds[i], LOW);
   Serial.print("[ir ");
   Serial.print(pin);
   Serial.println(" is down]");
 }
 
 void irup(int i){
-  int pin = irleds1[i];
-  digitalWrite(irleds1[i], HIGH);
+  int pin = irleds[i];
+  digitalWrite(irleds[i], HIGH);
   Serial.print("[ir ");
   Serial.print(pin);
   Serial.println(" is up]");
 }
 
 void uvblink(int i){
-  digitalWrite(uvleds1[i], HIGH);
+  digitalWrite(uvleds[i], HIGH);
   delay(UV_DELAY);
-  digitalWrite(uvleds1[i], LOW);
+  digitalWrite(uvleds[i], LOW);
 }
 
 void printState(int i, int expected, int actual){
@@ -58,13 +58,6 @@ void printState(int i, int expected, int actual){
   Serial.print(" actual: ");
   Serial.print(actual);
   Serial.println("]");
-}
-
-int getButton(){
-  for(int i=0; i<length; i++)
-    if(digitalRead(buttons1[i]) == LOW)
-      return i;
-  return -1;
 }
 
 void next1(){
@@ -106,7 +99,7 @@ void start2(){
 }
 
 void irup2(int i){
-  int pin = irleds2[i];
+  int pin = irleds[i];
   digitalWrite(pin, HIGH);
   Serial.print("[ir ");
   Serial.print(pin);
@@ -114,7 +107,7 @@ void irup2(int i){
 }
 
 void irdrop2(int i){
-  int pin = irleds2[i];
+  int pin = irleds[i];
   digitalWrite(pin, LOW);
   Serial.print("[ir ");
   Serial.print(pin);
@@ -135,20 +128,6 @@ void printState2(int i, int expected[], int actual[]){
   Serial.println("]");
 }
 
-void getButtons2(int result[]){
-    result[0] = -1;
-    result[1] = -1;
-    int j=0;
-
-  for(int i=0; i<length; i++){
-    if(j<2){
-        if(digitalRead(buttons2[i]) == LOW){
-            result[j] = i;
-            j++;
-        }
-    }
-  }
-}
 
 bool match2(int expected[], int actual[]){
     return (expected[0] == actual[0] && expected[1] == actual[1])
@@ -180,6 +159,28 @@ void lose(){
     start1();
 }
 
+int getButton(){
+  for(int i=0; i<length; i++)
+    if(digitalRead(buttons[i]) == LOW)
+      return i;
+  return -1;
+}
+
+void getButtons(int result[]){
+    result[0] = -1;
+    result[1] = -1;
+    int j=0;
+
+  for(int i=0; i<length; i++){
+    if(j<2){
+        if(digitalRead(buttons[i]) == LOW){
+            result[j] = i;
+            j++;
+        }
+    }
+  }
+}
+
 void setup() {  
   Serial.begin(9600);
   while (!Serial) {
@@ -187,14 +188,14 @@ void setup() {
   }  
   
   for(int i = 0; i<length; i++){
-    pinMode(irleds1[i], OUTPUT);
-    pinMode(uvleds1[i], OUTPUT);
-    pinMode(buttons1[i], INPUT_PULLUP);
+    pinMode(irleds[i], OUTPUT);
+    pinMode(uvleds[i], OUTPUT);
+    pinMode(buttons[i], INPUT_PULLUP);
   }
   start1();
   for(int i = 0; i<length; i++){
-    pinMode(irleds2[i], OUTPUT);
-    pinMode(buttons2[i], INPUT_PULLUP);
+    pinMode(irleds[i], OUTPUT);
+    pinMode(buttons[i], INPUT_PULLUP);
   }
 }
 
@@ -215,7 +216,7 @@ void loop() {
     else if(!won2) {        
         int desired[2] = {sequence2[index2][0], sequence2[index2][0]};
         int pressed[2] = {-1,-1};
-        getButtons2(pressed);
+        getButtons(pressed);
             
         if(match2(desired, pressed)){
             printState2(index2, desired, pressed);
