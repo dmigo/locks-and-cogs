@@ -8,7 +8,6 @@ int uvleds[length] = {10, 7, 4, 3, 2, 0};//список ультрафиолет
 
 int relays[2] = {A5, 1};// релешки
 
-
 //=== задача 1
 
 bool won1 = false;// победа в первом раунде
@@ -26,28 +25,6 @@ void start1(){
     irdrop(i);
   
   irup(sequence1[index1]);
-}
-
-void irdrop(int i){
-  int pin = irleds[i];
-  digitalWrite(irleds[i], LOW);
-  Serial.print("[ir ");
-  Serial.print(pin);
-  Serial.println(" is down]");
-}
-
-void irup(int i){
-  int pin = irleds[i];
-  digitalWrite(irleds[i], HIGH);
-  Serial.print("[ir ");
-  Serial.print(pin);
-  Serial.println(" is up]");
-}
-
-void uvblink(int i){
-  digitalWrite(uvleds[i], HIGH);
-  delay(UV_DELAY);
-  digitalWrite(uvleds[i], LOW);
 }
 
 void printState(int i, int expected, int actual){
@@ -91,27 +68,11 @@ void start2(){
   won2 = false;
   
   for(int i = 0; i<length; i++){
-    irdrop2(i);
+    irdrop(i);
   }
   
-  irup2(sequence2[index2][0]);
-  irup2(sequence2[index2][1]);
-}
-
-void irup2(int i){
-  int pin = irleds[i];
-  digitalWrite(pin, HIGH);
-  Serial.print("[ir ");
-  Serial.print(pin);
-  Serial.println(" is up]");
-}
-
-void irdrop2(int i){
-  int pin = irleds[i];
-  digitalWrite(pin, LOW);
-  Serial.print("[ir ");
-  Serial.print(pin);
-  Serial.println(" is up]");
+  irup(sequence2[index2][0]);
+  irup(sequence2[index2][1]);
 }
 
 void printState2(int i, int expected[], int actual[]){
@@ -135,15 +96,15 @@ bool match2(int expected[], int actual[]){
 }
 
 void next2(){
-    irdrop2(sequence2[index2][0]);
-    irdrop2(sequence2[index2][1]);
+    irdrop(sequence2[index2][0]);
+    irdrop(sequence2[index2][1]);
     index2++;
         
     if(index2 == slength2)
       win2();
     else{
-      irup2(sequence2[index2][0]);
-      irup2(sequence2[index2][1]);
+      irup(sequence2[index2][0]);
+      irup(sequence2[index2][1]);
     }
 }
 
@@ -179,6 +140,28 @@ void getButtons(int result[]){
         }
     }
   }
+}
+
+void irdrop(int i){
+  int pin = irleds[i];
+  digitalWrite(irleds[i], LOW);
+  Serial.print("[ir ");
+  Serial.print(pin);
+  Serial.println(" is down]");
+}
+
+void irup(int i){
+  int pin = irleds[i];
+  digitalWrite(irleds[i], HIGH);
+  Serial.print("[ir ");
+  Serial.print(pin);
+  Serial.println(" is up]");
+}
+
+void uvblink(int i){
+  digitalWrite(uvleds[i], HIGH);
+  delay(UV_DELAY);
+  digitalWrite(uvleds[i], LOW);
 }
 
 void setup() {  
