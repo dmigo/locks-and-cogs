@@ -60,7 +60,7 @@ void win1(){
 bool won2 = false;// победа во втором раунде
 int index2 = 0;
 const int slength2 = 3;//длинна правильной последовательности
-int sequence2[slength2][2] = {{0,1}, {0,2}, {1,2}};//правильная последовательность
+int sequence2[slength2][2] = {{1,5}, {3,5}, {2,4}};//правильная последовательность
 
 void start2(){
   Serial.println("[Starting the second game]");
@@ -113,13 +113,28 @@ void next2(){
 void win2(){
   Serial.println("[Round 2 win!]");
   won2 = true;
+  win();
 }
 //=== задача 2
 
 //=== общее
 
 void lose(){
-    start1();
+  restrainTheKraken();
+  start1();
+}
+
+void win(){
+  releaseTheKraken();
+}
+
+releaseTheKraken(){
+  digitalWrite(relays[0], HIGH);
+  digitalWrite(relays[1], HIGH);
+}
+restrainTheKraken(){
+  digitalWrite(relays[0], LOW);
+  digitalWrite(relays[1], LOW);
 }
 
 int getButton(){
@@ -196,7 +211,7 @@ void loop() {
         }
     }
     else if(!won2) {        
-        int desired[2] = {sequence2[index2][0], sequence2[index2][0]};
+        int desired[2] = {sequence2[index2][0], sequence2[index2][1]};
         int pressed[2] = {-1,-1};
         getButtons(pressed);
             
