@@ -83,9 +83,6 @@ void win1(){
   won1 = true;
   start2();
 }
-void lose1(){
-    start1();
-}
 //=== задача 1
 
 //=== задача 2
@@ -175,12 +172,14 @@ void win2(){
   Serial.println("[Round 2 win!]");
   won2 = true;
 }
-void lose2(){
-    start1();
-}
 //=== задача 2
 
 //=== общее
+
+void lose(){
+    start1();
+}
+
 void setup() {  
   Serial.begin(9600);
   while (!Serial) {
@@ -210,10 +209,10 @@ void loop() {
         }
         else if(pressed != -1){
             printState(index1, desired, pressed);
-            lose1();
+            lose();
         }
     }
-    else{        
+    else if(!won2) {        
         int desired[2] = {sequence2[index2][0], sequence2[index2][0]};
         int pressed[2] = {-1,-1};
         getButtons2(pressed);
@@ -224,8 +223,11 @@ void loop() {
         }
         else if(pressed[0] != -1 && pressed[1] != -1){
             printState2(index2, desired, pressed);
-            lose2();
+            lose();
         }
+    }
+    else{
+        lose();
     }
 }
 //=== общее
