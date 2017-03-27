@@ -21,6 +21,8 @@ void start1(){
   index1 = 0;
   won1 = false;
   
+  restrainTheKraken();
+  
   for(int i = 0; i<length; i++)
     irdrop(i);
   
@@ -120,7 +122,6 @@ void win2(){
 //=== общее
 
 void lose(){
-  restrainTheKraken();
   start1();
 }
 
@@ -128,11 +129,12 @@ void win(){
   releaseTheKraken();
 }
 
-releaseTheKraken(){
+void releaseTheKraken(){
   digitalWrite(relays[0], HIGH);
   digitalWrite(relays[1], HIGH);
 }
-restrainTheKraken(){
+
+void restrainTheKraken(){
   digitalWrite(relays[0], LOW);
   digitalWrite(relays[1], LOW);
 }
@@ -192,8 +194,11 @@ void setup() {
     pinMode(uvleds[i], OUTPUT);
     pinMode(buttons[i], INPUT_PULLUP);
   }
+
+  pinMode(relays[0], OUTPUT);
+  pinMode(relays[1], OUTPUT);
+
   start1();
-  
 }
 
 void loop() {
