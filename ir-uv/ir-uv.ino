@@ -22,7 +22,7 @@ void start1(){
   index1 = 0;
   won1 = false;
   
-  for(int i = 0; i<length1; i++)
+  for(int i = 0; i<length; i++)
     irdrop(i);
   
   irup(sequence1[index1]);
@@ -61,7 +61,7 @@ void printState(int i, int expected, int actual){
 }
 
 int getButton(){
-  for(int i=0; i<length1; i++)
+  for(int i=0; i<length; i++)
     if(digitalRead(buttons1[i]) == LOW)
       return i;
   return -1;
@@ -97,7 +97,7 @@ void start2(){
   index2 = 0;
   won2 = false;
   
-  for(int i = 0; i<length2; i++){
+  for(int i = 0; i<length; i++){
     irdrop2(i);
   }
   
@@ -140,7 +140,7 @@ void getButtons2(int result[]){
     result[1] = -1;
     int j=0;
 
-  for(int i=0; i<length2; i++){
+  for(int i=0; i<length; i++){
     if(j<2){
         if(digitalRead(buttons2[i]) == LOW){
             result[j] = i;
@@ -186,13 +186,13 @@ void setup() {
     ;
   }  
   
-  for(int i = 0; i<length1; i++){
+  for(int i = 0; i<length; i++){
     pinMode(irleds1[i], OUTPUT);
     pinMode(uvleds1[i], OUTPUT);
     pinMode(buttons1[i], INPUT_PULLUP);
   }
   start1();
-  for(int i = 0; i<length2; i++){
+  for(int i = 0; i<length; i++){
     pinMode(irleds2[i], OUTPUT);
     pinMode(buttons2[i], INPUT_PULLUP);
   }
@@ -227,6 +227,7 @@ void loop() {
         }
     }
     else{
+      if(getButton() != -1)
         lose();
     }
 }
