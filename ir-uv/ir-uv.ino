@@ -2,8 +2,8 @@
 #define UV_DELAY 1000 //задержка ультрафиолета в миллисекундах
 
 const int length = 6;//количество кнопок
-int buttons[length] = {12, 9, 6, 13, A1, A3};//список кнопок
-int irleds[length] = {11, 8, 5, A0, A2, A4};//список ик
+int buttons[length] = {12, 9, 6, A0, A1, A3};//список кнопок
+int irleds[length] = {11, 8, 5, 13, A2, A4};//список ик
 int uvleds[length] = {10, 7, 4, 3, 2, 0};//список ультрафиолеток
 
 int relays[2] = {A5, 1};// релешки
@@ -176,10 +176,7 @@ void setup() {
     pinMode(buttons[i], INPUT_PULLUP);
   }
   start1();
-  for(int i = 0; i<length; i++){
-    pinMode(irleds[i], OUTPUT);
-    pinMode(buttons[i], INPUT_PULLUP);
-  }
+  
 }
 
 void loop() {
