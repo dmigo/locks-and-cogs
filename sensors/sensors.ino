@@ -26,7 +26,7 @@ void start(){
 void next(){
   index++;
       
-  if(index1 == slength1){
+  if(index == slength){
     lightsOut();
     win();
   }
@@ -35,6 +35,7 @@ void next(){
 void win(){
   Serial.println("[Victory!]");
   won = true;
+  releaseTheKraken();
 }
 
 void printSuccess(int i, int expected){
@@ -51,23 +52,19 @@ void printFail(int i, int expected, int actua1, int actual2){
   Serial.print(" expected: ");
   Serial.print(expected);
   Serial.print(" actual: ");
-  Serial.print(actual1);
+  Serial.print(actua1);
   Serial.print(" ");
   Serial.print(actual2);
   Serial.println("]");
 }
 
 bool match(int expected, int one, int another){
-    return (expected[0] == actual[0] && expected[1] == actual[1]);
+    return (expected == one && expected == another);
 }
 
 void lose(){
   Serial.println("[You've lost!]");
   start();
-}
-
-void win(){
-  releaseTheKraken();
 }
 
 void releaseTheKraken(){
@@ -80,7 +77,7 @@ void restrainTheKraken(){
   digitalWrite(relays[1], LOW);
 }
 
-void lightsOut()
+void lightsOut(){
   //todo use register  
   for(int i=0; i<length; i++){
     digitalWrite(lights1[i], LOW);
@@ -106,12 +103,20 @@ void lightIn(int address){
   Serial.println(" is up]");
 }
 
-int updateSensor(int[] sensors, int[] lights, int oldone){
-    int newone = getSensor(sensors);
+int getSensor(int sensors[], int length){
+  for(int i = 0; i < length; i++)
+    if(digitalRead(sensors[i]) == LOW)
+      return i;
+
+  return -1;
+}
+
+int updateSensor(int sensors[], int lights[], int length, int oldone){
+    int newone = getSensor(sensors, length);
     if(oldone != newone){
       if(oldone != -1)
         lightOut(lights[oldone]);
-      if(newSide1 != -1)
+      if(newone != -1)
         lightIn(lights[newone]);
 
       return newone;
@@ -127,8 +132,8 @@ void setup() {
   
   for(int i = 0; i<length; i++){
     //todo init leds
-    pinMode(side1[i], INPUT_PULLUP);
-    pinMode(side2[i], INPUT_PULLUP);
+    pinMode(sensors1[i], INPUT_PULLUP);
+    pinMode(sensors2[i], INPUT_PULLUP);
   }
 
   pinMode(relays[0], OUTPUT);
@@ -141,12 +146,12 @@ void loop() {
     if(!won){
         int desired = sequence[index];
                 
-        side1 = updateSensor(sensors1, lights1, side1);
-        side2 = updateSensor(sensors2, lights2, side2);
+        side1 = updateSensor(sensors1, lights1, length, side1);
+        side2 = updateSensor(sensors2, lights2, length, side2);
         
         if(match(desired, side1, side2)){
             printSuccess(index, desired);
-            next2();
+            next();
         }
         else if(side1 != -1 && side2 != -1){
             printFail(index, desired, side1, side2);
