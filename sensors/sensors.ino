@@ -12,6 +12,9 @@ int index = 0;
 const int slength = 6;//длинна правильной последовательности
 int sequence[slength] = {1, 5, 3, 5, 2, 4};//правильная последовательность
 
+int side1 = -1; //активированный сенсор 1
+int side2 = -1; //активированный сенсор 2
+
 void start(){
   Serial.println("[Starting the game]");
   index = 0;
@@ -21,14 +24,12 @@ void start(){
 }
 
 void next(){
-    irdrop(sequence1[index1]);
-    uvblink(sequence1[index1]);
-    index1++;
-        
-    if(index1 == slength1)
-      win1();
-    else
-      irup(sequence1[index1]);
+  index++;
+      
+  if(index1 == slength1){
+    lightsOut();
+    win();
+  }
 }
 
 void win(){
@@ -56,13 +57,13 @@ void printFail(int i, int expected, int actua1, int actual2){
   Serial.println("]");
 }
 
-
 bool match(int expected, int one, int another){
     return (expected[0] == actual[0] && expected[1] == actual[1]);
 }
 
 void lose(){
-  start1();
+  Serial.println("[You've lost!]");
+  start();
 }
 
 void win(){
@@ -79,29 +80,18 @@ void restrainTheKraken(){
   digitalWrite(relays[1], LOW);
 }
 
-int getButton(){
-  for(int i=0; i<length; i++)
-    if(digitalRead(buttons[i]) == LOW)
-      return i;
-  return -1;
-}
-
-void getButtons(int result[]){
-    result[0] = -1;
-    result[1] = -1;
-    int j=0;
-
+void lightsOut()
+  //todo use register  
   for(int i=0; i<length; i++){
-    if(j<2){
-        if(digitalRead(buttons[i]) == LOW){
-            result[j] = i;
-            j++;
-        }
-    }
+    digitalWrite(lights1[i], LOW);
+    digitalWrite(lights2[i], LOW);
   }
+
+  Serial.print("[All lights out]");
 }
 
 void lightOut(int address){
+  //todo use register
   digitalWrite(address, LOW);
   Serial.print("[light ");
   Serial.print(address);
@@ -109,10 +99,24 @@ void lightOut(int address){
 }
 
 void lightIn(int address){
+  //todo use register
   digitalWrite(address, HIGH);
   Serial.print("[light ");
   Serial.print(address);
   Serial.println(" is up]");
+}
+
+int updateSensor(int[] sensors, int[] lights, int oldone){
+    int newone = getSensor(sensors);
+    if(oldone != newone){
+      if(oldone != -1)
+        lightOut(lights[oldone]);
+      if(newSide1 != -1)
+        lightIn(lights[newone]);
+
+      return newone;
+    }
+    return oldone;
 }
 
 void setup() {  
@@ -122,9 +126,9 @@ void setup() {
   }  
   
   for(int i = 0; i<length; i++){
-    pinMode(irleds[i], OUTPUT);
-    pinMode(uvleds[i], OUTPUT);
-    pinMode(buttons[i], INPUT_PULLUP);
+    //todo init leds
+    pinMode(side1[i], INPUT_PULLUP);
+    pinMode(side2[i], INPUT_PULLUP);
   }
 
   pinMode(relays[0], OUTPUT);
@@ -133,32 +137,12 @@ void setup() {
   start();
 }
 
-int side1 = -1;
-int side2 = -1;
-
 void loop() {
     if(!won){
         int desired = sequence[index];
-        int newSide1 = getSide1();
-        int newSide2 = getSide2();
-
-        if(side1 != newSide1){
-          if(side1 != -1)
-            lightOut(side1);
-          if(newSide1 != -1)
-            lightIn(newSide1);
-
-          side1 = newSide1;
-        }
-
-        if(side2 != newSide2){
-          if(side2 != -1)
-            lightOut(side2);
-          if(newSide2 != -1)
-            lightIn(newSide2);
-
-          side2 = newSide2;
-        }
+                
+        side1 = updateSensor(sensors1, lights1, side1);
+        side2 = updateSensor(sensors2, lights2, side2);
         
         if(match(desired, side1, side2)){
             printSuccess(index, desired);
@@ -168,9 +152,5 @@ void loop() {
             printFail(index, desired, side1, side2);
             lose();
         }
-    }
-    else{
-      if(getButton() != -1)
-        lose();
     }
 }
