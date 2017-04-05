@@ -1,9 +1,17 @@
 
+//Pin connected to latch pin (ST_CP) of 74HC595
+const int latchPin = 8;
+//Pin connected to clock pin (SH_CP) of 74HC595
+const int clockPin = 12;
+//Pin connected to Data in (DS) of 74HC595
+const int dataPin = 11;
+
 const int length = 6;//количество сенсоров
 int sensors1[length] = {12, 9, 6, A0, A1, A3};//список сенсоров сторона 1
 int sensors2[length] = {12, 9, 6, A0, A1, A3};//список сенсоров сторона 2
-int lights1[length] = {12, 9, 6, A0, A1, A3};//список подсветки 1
-int lights2[length] = {11, 8, 5, 13, A2, A4};//список подсветки 2
+int lightsState = 0;
+int lights1[length] = {0b000000000001, 0b000000000010, 0b000000000100, 0b000000001000, 0b000000010000, 0b000000100000};//список подсветки 1
+int lights2[length] = {0b000001000000, 0b000010000000, 0b000100000000, 0b001000000000, 0b010000000000, 0b100000000000};//список подсветки 2
 
 int relays[2] = {A5, 1};// релешки
 
@@ -78,11 +86,10 @@ void restrainTheKraken(){
 }
 
 void lightsOut(){
-  //todo use register  
-  for(int i=0; i<length; i++){
-    digitalWrite(lights1[i], LOW);
-    digitalWrite(lights2[i], LOW);
-  }
+  lightsState = 0;
+  digitalWrite(latchPin, 0);
+  shiftOut(dataPin, clockPin, MSBFIRST, lightsState);
+  digitalWrite(latchPin, 1);
 
   Serial.print("[All lights out]");
 }
@@ -138,6 +145,8 @@ void setup() {
 
   pinMode(relays[0], OUTPUT);
   pinMode(relays[1], OUTPUT);
+
+  pinMode(latchPin, OUTPUT);
 
   start();
 }
