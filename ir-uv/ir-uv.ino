@@ -1,3 +1,5 @@
+//todo порефакторить
+
 
 #define UV_DELAY 1000 //задержка ультрафиолета в миллисекундах
 
@@ -39,15 +41,21 @@ void printState(int i, int expected, int actual){
   Serial.println("]");
 }
 
-void next1(){
+void drop1(int one){
     irdrop(sequence1[index1]);
-    uvblink(sequence1[index1]);
+    uvblink(one);
+}
+
+void up1(){
+    if(index1 <= slength1)
+      irup(sequence1[index1]);
+}
+
+void next1(){
     index1++;
         
     if(index1 == slength1)
       win1();
-    else
-      irup(sequence1[index1]);
 }
 
 void win1(){
@@ -97,15 +105,21 @@ bool match2(int expected[], int actual[]){
         || (expected[0] == actual[1] && expected[1] == actual[0]);
 }
 
-void next2(){
+void drop2(int one, int another){
     irdrop(sequence2[index2][0]);
     irdrop(sequence2[index2][1]);
-    uvsblink(sequence2[index2][0], sequence2[index2][1]);
+    uvsblink(one, another);
+}
+
+void next2(){
     index2++;
         
     if(index2 == slength2)
       win2();
-    else{
+}
+
+void up2(){   
+    if(index2 <= slength2){
       irup(sequence2[index2][0]);
       irup(sequence2[index2][1]);
     }
@@ -215,10 +229,13 @@ void loop() {
             
         if(pressed == desired){
             printState(index1, desired, pressed);
+            drop1(pressed);
             next1();
+          	up1();
         }
         else if(pressed != -1){
             printState(index1, desired, pressed);
+          	drop1(pressed);
             lose();
         }
     }
@@ -229,11 +246,14 @@ void loop() {
             
         if(match2(desired, pressed)){
             printState2(index2, desired, pressed);
-            next2();
+          	drop2(pressed[0], pressed[1]);
+          	next2();
+          	up2();
         }
         else if(pressed[0] != -1 && pressed[1] != -1){
             printState2(index2, desired, pressed);
-            lose();
+          drop2(pressed[0], pressed[1]);
+          	lose();
         }
     }
     else{
