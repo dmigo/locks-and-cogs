@@ -88,29 +88,34 @@ void restrainTheKraken(){
 void lightsOut(){
   lightsState = 0;
   digitalWrite(latchPin, 0);
-  shiftOut(dataPin, clockPin, MSBFIRST, lightsState);
+  byte toWrite[2] = {(lightsState & 0x7f), ((lightsState >> 7) & 0x7f) | 0x80};
+  shiftOut(dataPin, clockPin, MSBFIRST, toWrite);
   digitalWrite(latchPin, 1);
 
   Serial.print("[All lights out]");
 }
 
-void lightOut(int state){
+void lightOut(int address){
 
-  lightsState = ;
+  lightsState = lightsState ;
   digitalWrite(latchPin, 0);
-  shiftOut(dataPin, clockPin, MSBFIRST, lightsState);
+  byte toWrite[2] = {(lightsState & 0x7f), ((lightsState >> 7) & 0x7f) | 0x80};
+  shiftOut(dataPin, clockPin, MSBFIRST, toWrite);
   digitalWrite(latchPin, 1);
 
-  //todo use register
-  digitalWrite(address, LOW);
   Serial.print("[light ");
   Serial.print(address);
   Serial.println(" is down]");
 }
 
 void lightIn(int address){
-  //todo use register
-  digitalWrite(address, HIGH);
+
+  lightsState = lightsState | address;
+  digitalWrite(latchPin, 0);
+  byte toWrite[2] = {(lightsState & 0x7f), ((lightsState >> 7) & 0x7f) | 0x80};
+  shiftOut(dataPin, clockPin, MSBFIRST, toWrite);
+  digitalWrite(latchPin, 1);
+
   Serial.print("[light ");
   Serial.print(address);
   Serial.println(" is up]");
@@ -144,7 +149,6 @@ void setup() {
   }  
   
   for(int i = 0; i<length; i++){
-    //todo init leds
     pinMode(sensors1[i], INPUT_PULLUP);
     pinMode(sensors2[i], INPUT_PULLUP);
   }
