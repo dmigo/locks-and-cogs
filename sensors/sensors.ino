@@ -7,8 +7,8 @@ const int clockPin = 12;
 const int dataPin = 11;
 
 const int length = 6;//количество сенсоров
-int sensors1[length] = {12, 9, 6, A0, A1, A3};//список сенсоров сторона 1
-int sensors2[length] = {12, 9, 6, A0, A1, A3};//список сенсоров сторона 2
+int sensors1[length] = {0, 2, 3, 4, 5, 6};//список сенсоров сторона 1
+int sensors2[length] = {7, 9, 10, 13, A0, A1};//список сенсоров сторона 2
 int lightsState = 0;
 int lights1[length] = {0b000000000001, 0b000000000010, 0b000000000100, 0b000000001000, 0b000000010000, 0b000000100000};//список подсветки 1
 int lights2[length] = {0b000001000000, 0b000010000000, 0b000100000000, 0b001000000000, 0b010000000000, 0b100000000000};//список подсветки 2
@@ -94,7 +94,13 @@ void lightsOut(){
   Serial.print("[All lights out]");
 }
 
-void lightOut(int address){
+void lightOut(int state){
+
+  lightsState = ;
+  digitalWrite(latchPin, 0);
+  shiftOut(dataPin, clockPin, MSBFIRST, lightsState);
+  digitalWrite(latchPin, 1);
+
   //todo use register
   digitalWrite(address, LOW);
   Serial.print("[light ");
