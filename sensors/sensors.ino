@@ -169,16 +169,22 @@ void loop() {
     if(!won){
         int desired = sequence[index];
                 
-        side1 = updateSensor(sensors1, lights1, length, side1);
-        side2 = updateSensor(sensors2, lights2, length, side2);
+        int newside1 = updateSensor(sensors1, lights1, length, side1);
+        int newside2 = updateSensor(sensors2, lights2, length, side2);
         
-        if(match(desired, side1, side2)){
-            printSuccess(index, desired);
-            next();
+        if(newside1 != side1 || newside2 != side2){
+          side1 = newside1;
+          side2 = newside2;
+
+          if(match(desired, side1, side2)){
+              printSuccess(index, desired);
+              next();
+          }
+          else if(side1 != -1 && side2 != -1){
+              printFail(index, desired, side1, side2);
+              lose();
+          }
         }
-        else if(side1 != -1 && side2 != -1){
-            printFail(index, desired, side1, side2);
-            lose();
-        }
+
     }
 }
