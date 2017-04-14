@@ -5,15 +5,15 @@
 
 #define UID 32167 //айдишник нужной нфцшки
 
-#define CLOCKWISE 1 //пин релешки на движение по часовой
-#define COUNTERCLOCKWISE 1 //пин релешки на движение против часовой
+#define CLOCKWISE 9 //пин релешки на движение по часовой
+#define COUNTERCLOCKWISE 10 //пин релешки на движение против часовой
  
 #define SS_PIN 8
 #define RST_PIN 7
 
 bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
 const int letters_l = 5; //длинна последовательности букв
-const int letters[letters_l] = {6, 7, 5, 8, 5}; // пины букв {d, i, a, n, a}
+const int letters[letters_l] = {3, 4, 2, 5, 2}; // пины букв {d, i, a, n, a}
 const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE};
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // рфид ридер
@@ -59,10 +59,15 @@ int readUid(){// читаем ид карточки
 }
 
 void moveTo(int destination, int direction){ // движемся к букве
-    digitalWrite(direction, HIGH);
-    while(digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
-      {;}
-    digitalWrite(direction, LOW);
+  Serial.print("moving pin ");
+  Serial.print(direction);
+  Serial.print(" to ");
+  Serial.println(destination);
+
+  digitalWrite(direction, HIGH);
+  while(digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
+    {;}
+  digitalWrite(direction, LOW);
 }
 
 void loop() {
@@ -75,8 +80,6 @@ void loop() {
     Serial.println("Here comes Diana!");
     freeze = true;
     for(int i = 0; i< letters_l; i++){
-      Serial.print("Move to pin:");
-      Serial.println(letters[i]);
       moveTo(letters[i], directions[i]);
       delay(DELAY);
     }    
