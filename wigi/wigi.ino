@@ -24,9 +24,9 @@ void setup() {
   }
   
   pinMode(COUNTERCLOCKWISE, OUTPUT);
-  digitalWrite(COUNTERCLOCKWEISE, LOW);
+  digitalWrite(COUNTERCLOCKWISE, LOW);
   pinMode(CLOCKWISE, OUTPUT);
-  digitalWrite(CLOCKWEISE, LOW);
+  digitalWrite(CLOCKWISE, LOW);
   
   Serial.begin(9600);
   while (!Serial) {
@@ -68,7 +68,7 @@ void moveTo(int destination, int direction){ // движемся к букве
 void loop() {
   int uid = readUid();
   Serial.print("uid:");
-  Serial.println(uidDec);
+  Serial.println(uid);
 
   if(uid == UID 
     && !freeze){
@@ -78,7 +78,7 @@ void loop() {
       Serial.print("Move to pin:");
       Serial.println(letters[i]);
       moveTo(letters[i], directions[i]);
-      sleep(DELAY);
+      delay(DELAY);
     }    
   }
  }
