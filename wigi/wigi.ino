@@ -3,13 +3,13 @@
 
 #define DELAY 1100 //задержка между буквами
 
-#define UID 32167 //айдишник нужной нфцшки
+#define UID 19001 //айдишник нужной нфцшки
 
-#define CLOCKWISE 9 //пин релешки на движение по часовой
-#define COUNTERCLOCKWISE 10 //пин релешки на движение против часовой
+#define CLOCKWISE 7 //пин релешки на движение по часовой
+#define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
  
-#define SS_PIN 8
-#define RST_PIN 7
+#define SS_PIN 10
+#define RST_PIN 9
 
 bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
 const int letters_l = 5; //длинна последовательности букв
@@ -32,9 +32,12 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }  
+
+  Serial.println("Initializing...");
   
   SPI.begin();            // инициализация SPI
-  mfrc522.PCD_Init();     // инициализация MFRC522
+ //  mfrc522.PCD_Init();     // инициализация MFRC522
+    
   Serial.println("Start...");
 }
 
@@ -53,8 +56,9 @@ int readUid(){// читаем ид карточки
       uidDec=uidDec*256+uidDecTemp;
     }
 
-    return uidDec;
-    //todo ??? mfrc522.PICC_ReadCardSerial();    // не факт что нужно       
+    mfrc522.PICC_ReadCardSerial();
+
+    return uidDec;       
   }
 }
 
@@ -64,24 +68,43 @@ void moveTo(int destination, int direction){ // движемся к букве
   Serial.print(" to ");
   Serial.println(destination);
 
+  int blinker = 0;
+  int state = HIGH;
   digitalWrite(direction, HIGH);
+  
   while(digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
-    {;}
+  {
+    blinker++;
+    if(blinker%7000==0)
+      state = toggle(direction, state);
+  }
   digitalWrite(direction, LOW);
 }
 
-void loop() {
-  int uid = readUid();
-  Serial.print("uid:");
-  Serial.println(uid);
+int toggle(int pin, int state){
+  if(state == HIGH){
+    digitalWrite(pin, LOW);
+    return LOW;
+  }
+  else{
+    digitalWrite(pin, HIGH);
+    return HIGH;
+  }
+}
 
-  if(uid == UID 
-    && !freeze){
-    Serial.println("Here comes Diana!");
-    freeze = true;
-    for(int i = 0; i< letters_l; i++){
-      moveTo(letters[i], directions[i]);
-      delay(DELAY);
-    }    
+void loop() {
+  if(!freeze){     
+    int uid = readUid();
+    Serial.print("uid:");
+    Serial.println(uid);
+  
+    if(uid == UID){
+      Serial.println("Here comes Diana!");
+      freeze = true;
+      for(int i = 0; i< letters_l; i++){
+        moveTo(letters[i], directions[i]);
+        delay(DELAY);
+      }    
+    } 
   }
  }
