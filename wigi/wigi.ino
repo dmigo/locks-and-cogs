@@ -36,7 +36,7 @@ void setup() {
   Serial.println("Initializing...");
   
   SPI.begin();            // инициализация SPI
- //  mfrc522.PCD_Init();     // инициализация MFRC522
+  mfrc522.PCD_Init();     // инициализация MFRC522
     
   Serial.println("Start...");
 }
