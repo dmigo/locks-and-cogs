@@ -15,13 +15,13 @@
 #include <Servo.h>
 
 const int wheels_l = 3;
-const int wheels1[wheels_l] = {};
-const int wheels2[wheels_l] = {};
+const int wheels1[wheels_l] = {2, 3, 4};
+const int wheels2[wheels_l] = {6, 7, 8};
 
-const int relay =;
+const int relay = 12;
 
-const int voltmeter1 = ;
-const int voltmeter2 = ;
+const int voltmeter1 = 5;
+const int voltmeter2 = 9;
 
 bool won = false;
 
