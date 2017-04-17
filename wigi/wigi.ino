@@ -3,8 +3,8 @@
 
 #define DELAY 1100 //задержка между буквами
 
-#define UID 19001 //айдишник нужной нфцшки
-
+#define UID 9472  //айдишник нужной нфцшки
+//12603
 #define CLOCKWISE 7 //пин релешки на движение по часовой
 #define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
  
@@ -20,13 +20,13 @@ MFRC522 mfrc522(SS_PIN, RST_PIN); // рфид ридер
 
 void setup() {  
   for(int i = 0; i< letters_l; i++){
-    pinMode(letters[i], INPUT_PULLUP);
+    pinMode(letters[i], INPUT);
   }
   
   pinMode(COUNTERCLOCKWISE, OUTPUT);
-  digitalWrite(COUNTERCLOCKWISE, LOW);
+  digitalWrite(COUNTERCLOCKWISE, HIGH);  //Ну релеееешки жееееж))
   pinMode(CLOCKWISE, OUTPUT);
-  digitalWrite(CLOCKWISE, LOW);
+  digitalWrite(CLOCKWISE, HIGH);
   
   Serial.begin(9600);
   while (!Serial) {
@@ -69,26 +69,26 @@ void moveTo(int destination, int direction){ // движемся к букве
   Serial.println(destination);
 
   int blinker = 0;
-  int state = HIGH;
+  int state = LOW;
   digitalWrite(direction, HIGH);
   
   while(digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
   {
     blinker++;
-    if(blinker%7000==0)
+    if(blinker%1500==0)
       state = toggle(direction, state);
   }
-  digitalWrite(direction, LOW);
+  digitalWrite(direction, HIGH);
 }
 
 int toggle(int pin, int state){
-  if(state == HIGH){
-    digitalWrite(pin, LOW);
-    return LOW;
-  }
-  else{
+  if(state == LOW){
     digitalWrite(pin, HIGH);
     return HIGH;
+  }
+  else{
+    digitalWrite(pin, LOW);
+    return LOW;
   }
 }
 
