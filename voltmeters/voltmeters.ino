@@ -92,7 +92,9 @@ void loop(){
         win();
 
     if(isGreen(seconds, lastRight1, lastWrong1))
+    {
         voltmeter1.write(getGreen());
+    }
     if(isRed(seconds, lastRight1, lastWrong1))
         voltmeter1.write(getRed());
 
@@ -112,7 +114,7 @@ void loop(){
         lastWrong2 = seconds;    
 }
 
-bool readRight(int[] right){
+bool readRight(int right[]){
     if(digitalRead(wheels[2]) == LOW){
         Serial.println("RIGHT");
         return true;
@@ -120,7 +122,7 @@ bool readRight(int[] right){
     return false;
 }
 
-bool readWrong(int[] right){
+bool readWrong(int right[]){
     for(int i = 0; i<2; i++)
         if(digitalRead(wheels[i]) == LOW){
             Serial.println("WRONG");
