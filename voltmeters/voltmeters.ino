@@ -20,8 +20,8 @@ const int wheels2[wheels_l] = {6, 7, 8};
 
 const int relay = 12;
 
-const int voltmeter1 = 5;
-const int voltmeter2 = 9;
+const int voltmeterPin1 = 5;
+const int voltmeterPin2 = 9;
 
 bool won = false;
 
@@ -30,8 +30,8 @@ long lastRight1 = 4294967295;
 long lastWrong2 = 4294967295;
 long lastRight2 = 4294967295;
 
-Servo servo1;
-Servo servo2;
+Servo voltmeter1;
+Servo voltmeter2;
 
 void setup(){
     for(int i = 0; i<wheels_l; i++)
@@ -47,15 +47,11 @@ void setup(){
     ; // wait for serial port to connect. Needed for native USB port only
     }  
 
-    servo1.attach(servoPin1);
-    moveTo(servo1, SERVO_START);
+    voltmeter1.attach(voltmeterPin1);
+    voltmeter1.write(SERVO_START);
 
-    servo2.attach(servoPin2);
-    moveTo(servo2, SERVO_START);
-}
-
-void moveTo(Servo servo, int newState){
-  servo.write(newState);
+    voltmeter2.attach(voltmeterPin1);
+    voltmeter2.write(SERVO_START);
 }
 
 bool isWinning(long seconds){
@@ -69,18 +65,16 @@ bool isGreen(long seconds, long lastRight, long lastWrong){
     return lastRight > lastWrong + TIME_TO_REACT;
 }
 
-void goGreen(int pin){
-    int destination = random(GREENZONE_BEGIN, GREENZONE_END);
-    moveTo(pin, destination);
+int getGreen(){
+    return random(GREENZONE_BEGIN, GREENZONE_END);
 }
 
 bool isRed(long seconds, long lastRight, long lastWrong){
     return  lastWrong > lastRight + TIME_TO_REACT;
 }
 
-void goRed(int pin){
-    int destination = random(REDZONE_BEGIN, REDZONE_END);
-    moveTo(pin, destination);
+int getRed(){
+    return random(REDZONE_BEGIN, REDZONE_END);
 }
 
 void win(){
@@ -98,24 +92,39 @@ void loop(){
         win();
 
     if(isGreen(seconds, lastRight1, lastWrong1))
-        goGreen(voltmeter1);
+        voltmeter1.write(getGreen());
     if(isRed(seconds, lastRight1, lastWrong1))
-        goRed(voltmeter1);
+        voltmeter1.write(getRed());
 
     if(isGreen(seconds, lastRight2, lastWrong2))
-        goGreen(voltmeter2);
+        voltmeter2.write(getGreen());
     if(isRed(seconds, lastRight2, lastWrong2))
-        goRed(voltmeter2);
+        voltmeter2.write(getRed());
 
-    for(int i = 0; i<2; i++)
-        if(digitalRead(wheels1[i]) == LOW)
-            lastWrong1 = seconds;
-    if(digitalRead(wheels1[2]) == LOW)
+    if(readRight(wheels1))
         lastRight1 = seconds;
-                
+    if(readWrong(wheels1))
+        lastWrong1 = seconds;
+
+    if(readRight(wheels2))
+        lastRight2 = seconds;
+    if(readWrong(wheels2))
+        lastWrong2 = seconds;    
+}
+
+bool readRight(int[] right){
+    if(digitalRead(wheels[2]) == LOW){
+        Serial.println("RIGHT");
+        return true;
+    }
+    return false;
+}
+
+bool readWrong(int[] right){
     for(int i = 0; i<2; i++)
-        if(digitalRead(wheels2[i]) == LOW)
-            lastWrong2 = seconds;
-    if(digitalRead(wheels2[2]) == LOW)
-        lastRight2 = seconds;    
+        if(digitalRead(wheels[i]) == LOW){
+            Serial.println("WRONG");
+            return true;
+        }
+    return false;
 }
