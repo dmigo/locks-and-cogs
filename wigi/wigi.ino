@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-#define DELAY 1100 //задержка между буквами
+#define DELAY 2100 //задержка между буквами
 
 #define UID 9472  //айдишник нужной нфцшки
 //12603
@@ -12,15 +12,15 @@
 #define RST_PIN 9
 
 bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
-const int letters_l = 5; //длинна последовательности букв
-const int letters[letters_l] = {3, 4, 2, 5, 2}; // пины букв {d, i, a, n, a}
-const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE};
+const int letters_l = 6; //длинна последовательности букв
+const int letters[letters_l] = {3, 4, 2, 5, 2, 6}; // пины букв {d, i, a, n, a, zero}
+const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, COUNTERCLOCKWISE};
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // рфид ридер
 
 void setup() {  
   for(int i = 0; i< letters_l; i++){
-    pinMode(letters[i], INPUT);
+    pinMode(letters[i], INPUT_PULLUP);
   }
   
   pinMode(COUNTERCLOCKWISE, OUTPUT);
@@ -74,8 +74,7 @@ void moveTo(int destination, int direction){ // движемся к букве
   
   while(digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
   {
-    blinker++;
-    if(blinker%1500==0)
+
       state = toggle(direction, state);
   }
   digitalWrite(direction, HIGH);
