@@ -12,9 +12,9 @@
 #define RST_PIN 9
 
 bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
-const int letters_l = 5; //длинна последовательности букв
-const int letters[letters_l] = {3, 4, 2, 5, 2}; // пины букв {d, i, a, n, a}
-const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE};
+const int letters_l = 6; //длинна последовательности букв + 1 на стартовое положение
+const int letters[letters_l] = {3, 4, 2, 5, 2, 6}; // пины букв {d, i, a, n, a, стартовое положение}
+const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE};
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // рфид ридер
 
@@ -86,10 +86,12 @@ int toggle(int pin, int state){
     digitalWrite(pin, LOW);
     return LOW;
   }
-  else{
+  else if(readUid() == UID){
     digitalWrite(pin, HIGH);
     return HIGH;
   }
+  else
+    return LOW;
 }
 
 void loop() {
@@ -100,11 +102,13 @@ void loop() {
   
     if(uid == UID){
       Serial.println("Here comes Diana!");
-      freeze = true;
+      
       for(int i = 0; i< letters_l; i++){
         moveTo(letters[i], directions[i]);
         delay(DELAY);
-      }    
+      }
+
+      freeze = true;
     } 
   }
  }
