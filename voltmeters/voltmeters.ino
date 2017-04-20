@@ -25,10 +25,10 @@ const int voltmeterPin2 = 9;
 
 bool won = false;
 
-long lastWrong1 = 4294967295;
-long lastRight1 = 4294967295;
-long lastWrong2 = 4294967295;
-long lastRight2 = 4294967295;
+long lastWrong1 = -4294967295;
+long lastRight1 = -4294967295;
+long lastWrong2 = -4294967295;
+long lastRight2 = -4294967295;
 
 Servo voltmeter1;
 Servo voltmeter2;
@@ -55,14 +55,15 @@ void setup(){
 }
 
 bool isWinning(long seconds){
-    return seconds - lastRight1 < TIME_TO_WIN
-        && seconds - lastRight2 < TIME_TO_WIN
-        && seconds - lastWrong1 > TIME_TO_WIN
-        && seconds - lastWrong2 > TIME_TO_WIN;
+    long some = seconds - TIME_TO_WIN;
+    return lastRight1 > some
+        && lastRight2 > some
+        && lastWrong1 < some
+        && lastWrong2 < some;
 }
 
 bool isGreen(long seconds, long lastRight, long lastWrong){
-    return lastRight > lastWrong + TIME_TO_REACT;
+    return lastRight > lastWrong;
 }
 
 int getGreen(){
@@ -70,7 +71,7 @@ int getGreen(){
 }
 
 bool isRed(long seconds, long lastRight, long lastWrong){
-    return  lastWrong > lastRight + TIME_TO_REACT;
+    return  lastWrong > lastRight;
 }
 
 int getRed(){
