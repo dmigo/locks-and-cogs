@@ -14,6 +14,8 @@ int relays[2] = {A5, 1};// релешки
 
 bool won1 = false;// победа в первом раунде
 
+int lastButton = -1;
+
 int index1 = 0;
 const int slength1 = 6;//длинна правильной последовательности
 int sequence1[slength1] = {5, 4, 3, 2, 1, 0};//правильная последовательность
@@ -22,7 +24,8 @@ void start1(){
   Serial.println("[Starting the first game]");
   index1 = 0;
   won1 = false;
-  
+  lastButton = -1;
+
   restrainTheKraken();
   
   for(int i = 0; i<length; i++)
@@ -225,18 +228,22 @@ void setup() {
 void loop() {
     if(!won1){
         int desired = sequence1[index1];
-        int pressed = getButton();
-            
-        if(pressed == desired){
-            printState(index1, desired, pressed);
-            drop1(pressed);
-            next1();
-          	up1();
-        }
-        else if(pressed != -1){
-            printState(index1, desired, pressed);
-          	drop1(pressed);
-            lose();
+        int newButton = getButton();
+        
+        if(newButton != lastButton){
+          if(lastButton == desired){
+              printState(index1, desired, lastButton);
+              drop1(lastButton);
+              next1();
+              up1();
+          }
+          else if(lastButton != -1){
+              printState(index1, desired, lastButton);
+              drop1(lastButton);
+              lose();
+          }
+          
+          lastButton = newButton;
         }
     }
     else if(!won2) {        
