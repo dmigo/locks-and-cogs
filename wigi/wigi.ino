@@ -24,6 +24,7 @@ void setup() {
   for(int i = 0; i< letters_l; i++){
     pinMode(letters[i], INPUT_PULLUP);
   }
+  pinMode(ZERO, INPUT_PULLUP);
   
   pinMode(COUNTERCLOCKWISE, OUTPUT);
   digitalWrite(COUNTERCLOCKWISE, HIGH);  //Ну релеееешки жееееж))
@@ -95,8 +96,8 @@ void moveToZero(){
   
   while(digitalRead(ZERO) == HIGH) // ждем пока не дойдем до старта
   {
-  digitalWrite(COUNTERCLOCKWISE, LOW);
-  Serial.println("moving while"); 
+   digitalWrite(COUNTERCLOCKWISE, LOW);
+   Serial.println("moving while"); 
   }
 }
 
