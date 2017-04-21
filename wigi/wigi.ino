@@ -74,7 +74,7 @@ bool moveTo(int destination, int direction){ // движемся к букве
 
   digitalWrite(direction, LOW);
   
-  while(digitalRead(destination) == HIGH) // ждем пока не дойдем до буквы
+  while(digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
   {
       if(readUid() != UID){
         Serial.println("RFID removed!");
@@ -92,13 +92,13 @@ bool moveTo(int destination, int direction){ // движемся к букве
 void moveToZero(){
   Serial.println("moving to start");
   
-  digitalWrite(CLOCKWISE, HIGH);
+  digitalWrite(COUNTERCLOCKWISE, LOW);
   
-  while(digitalRead(ZERO) == HIGH) // ждем пока не дойдем до старта
-  {
-   digitalWrite(COUNTERCLOCKWISE, LOW);
-   Serial.println("moving while"); 
+  while(digitalRead(ZERO) != LOW) // ждем пока не дойдем до старта
+  { 
   }
+
+  digitalWrite(COUNTERCLOCKWISE, HIGH);
 }
 
 void loop() {
