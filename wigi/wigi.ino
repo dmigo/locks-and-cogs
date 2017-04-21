@@ -14,9 +14,9 @@
 #define RST_PIN 9
 
 bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
-const int letters_l = 6; //длинна последовательности букв
+const int letters_l = 5; //длинна последовательности букв
 const int letters[letters_l] = {3, 4, 2, 5, 2}; // пины букв {d, i, a, n, a}
-const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, COUNTERCLOCKWISE};
+const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE};
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // рфид ридер
 
