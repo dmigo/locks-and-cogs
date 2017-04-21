@@ -8,12 +8,14 @@
 #define CLOCKWISE 7 //пин релешки на движение по часовой
 #define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
  
+#define ZERO 6 //пин стартового положения
+
 #define SS_PIN 10
 #define RST_PIN 9
 
 bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
 const int letters_l = 6; //длинна последовательности букв
-const int letters[letters_l] = {3, 4, 2, 5, 2, 6}; // пины букв {d, i, a, n, a, zero}
+const int letters[letters_l] = {3, 4, 2, 5, 2}; // пины букв {d, i, a, n, a}
 const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, COUNTERCLOCKWISE};
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // рфид ридер
@@ -62,31 +64,37 @@ int readUid(){// читаем ид карточки
   }
 }
 
-void moveTo(int destination, int direction){ // движемся к букве
+bool moveTo(int destination, int direction){ // движемся к букве
 
   Serial.print("moving pin ");
   Serial.print(direction);
   Serial.print(" to ");
   Serial.println(destination);
 
-  bool moving = true;// индикатор движения
   digitalWrite(direction, LOW);
   
   while(digitalRead(destination) != HIGH) // ждем пока не дойдем до буквы
-  {    
-    if(moving){
+  {
       if(readUid() != UID){
         digitalWrite(direction, HIGH);
-        moving = false;
+        return false;
       }
-    }
-    else{
-      if(readUid() == UID){
-        digitalWrite(direction, LOW);
-        moving = true;
-      }
-    }
   }
+  
+  digitalWrite(direction, HIGH);
+  return true;
+}
+
+void moveToZero(){
+  Serial.println("moving to start");
+  
+  digitalWrite(COUNTERCLOCKWISE, LOW);
+  
+  while(digitalRead(ZERO) != HIGH) // ждем пока не дойдем до старта
+  {
+  }
+  
+  digitalWrite(COUNTERCLOCKWISE, HIGH);
 }
 
 void loop() {
@@ -98,10 +106,12 @@ void loop() {
     if(uid == UID){
       Serial.println("Here comes Diana!");
       
-      for(int i = 0; i< letters_l; i++){
-        moveTo(letters[i], directions[i]);
+      bool moveon = true;
+      for(int i = 0; i < letters_l && moveon; i++){
+        moveon = moveTo(letters[i], directions[i]);
         delay(DELAY);
       }
+      moveToZero();
 
       freeze = true;
     } 
