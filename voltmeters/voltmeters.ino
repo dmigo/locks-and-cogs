@@ -12,6 +12,10 @@
 #define REDZONE_BEGIN 40 //начало красной зоны
 #define REDZONE_END 70 //конец красной зоны
 
+#define NONE 0
+#define GREEN 1
+#define RED 2
+
 #include <Servo.h>
 
 const int wheels_l = 3;
@@ -20,8 +24,8 @@ const int wheels2[wheels_l] = {6, 7, 8};
 
 const int relay = 12;
 
-const int voltmeterPin1 = 5;
-const int voltmeterPin2 = 9;
+const int voltmeterPin1 = A1;
+const int voltmeterPin2 = A0;
 
 bool won = false;
 
@@ -31,7 +35,9 @@ long lastWrong2 = -4294967295;
 long lastRight2 = -4294967295;
 
 Servo voltmeter1;
+int state1 = NONE;
 Servo voltmeter2;
+int state2 = NONE;
 
 void setup(){
     for(int i = 0; i<wheels_l; i++)
@@ -50,7 +56,7 @@ void setup(){
     voltmeter1.attach(voltmeterPin1);
     voltmeter1.write(SERVO_START);
 
-    voltmeter2.attach(voltmeterPin1);
+    voltmeter2.attach(voltmeterPin2);
     voltmeter2.write(SERVO_START);
 }
 
@@ -67,6 +73,7 @@ bool isGreen(long seconds, long lastRight, long lastWrong){
 }
 
 int getGreen(){
+    Serial.println("GREEN");
     return random(GREENZONE_BEGIN, GREENZONE_END);
 }
 
@@ -75,10 +82,12 @@ bool isRed(long seconds, long lastRight, long lastWrong){
 }
 
 int getRed(){
+    Serial.println("RED");
     return random(REDZONE_BEGIN, REDZONE_END);
 }
 
 void win(){
+    Serial.println("You've won!");
     won = true;
     digitalWrite(relay, HIGH);
 }
@@ -94,15 +103,33 @@ void loop(){
 
     if(isGreen(seconds, lastRight1, lastWrong1))
     {
-        voltmeter1.write(getGreen());
+        if(state1 !=  GREEN){
+            voltmeter1.write(getGreen());
+            state1 = GREEN;
+        }
     }
     if(isRed(seconds, lastRight1, lastWrong1))
-        voltmeter1.write(getRed());
+    {
+        if(state1 !=  RED){
+            voltmeter1.write(getRed());
+            state1 = RED;
+        }
+    }
 
     if(isGreen(seconds, lastRight2, lastWrong2))
-        voltmeter2.write(getGreen());
+     {
+        if(state2 !=  GREEN){
+            voltmeter2.write(getGreen());
+            state2 = GREEN;
+        }
+    }
     if(isRed(seconds, lastRight2, lastWrong2))
-        voltmeter2.write(getRed());
+    {
+        if(state2 !=  RED){
+            voltmeter2.write(getRed());
+            state2 = RED;
+        }
+    }
 
     if(readRight(wheels1))
         lastRight1 = seconds;
