@@ -115,7 +115,7 @@ void loop(){
         lastWrong2 = seconds;    
 }
 
-bool readRight(int right[]){
+bool readRight(const int wheels[]){
     if(digitalRead(wheels[2]) == LOW){
         Serial.println("RIGHT");
         return true;
@@ -123,7 +123,7 @@ bool readRight(int right[]){
     return false;
 }
 
-bool readWrong(int right[]){
+bool readWrong(const int wheels[]){
     for(int i = 0; i<2; i++)
         if(digitalRead(wheels[i]) == LOW){
             Serial.println("WRONG");
