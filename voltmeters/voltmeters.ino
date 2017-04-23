@@ -6,15 +6,17 @@
 
 #define SERVO_START 0 //стартовая позиция серваков
 
-#define GREENZONE_BEGIN 10 //начало зеленой зоны
-#define GREENZONE_END 30 //конец зеленой зоны
+#define GREENZONE_BEGIN 30 //начало зеленой зоны
+#define GREENZONE_END 60 //конец зеленой зоны
 
-#define REDZONE_BEGIN 40 //начало красной зоны
-#define REDZONE_END 70 //конец красной зоны
+#define REDZONE_BEGIN 80 //начало красной зоны
+#define REDZONE_END 110 //конец красной зоны
 
 #define NONE 0
 #define GREEN 1
 #define RED 2
+
+#define DEFAULT -32768
 
 #include <Servo.h>
 
@@ -29,10 +31,10 @@ const int voltmeterPin2 = A0;
 
 bool won = false;
 
-long lastWrong1 = -4294967295;
-long lastRight1 = -4294967295;
-long lastWrong2 = -4294967295;
-long lastRight2 = -4294967295;
+long lastWrong1 = DEFAULT;
+long lastRight1 = DEFAULT;
+long lastWrong2 = DEFAULT;
+long lastRight2 = DEFAULT;
 
 Servo voltmeter1;
 int state1 = NONE;
@@ -58,18 +60,23 @@ void setup(){
 
     voltmeter2.attach(voltmeterPin2);
     voltmeter2.write(SERVO_START);
+
+    Serial.println("starting!");
 }
 
 bool isWinning(long seconds){
     long some = seconds - TIME_TO_WIN;
-    return lastRight1 > some
+    return lastRight1 != DEFAULT
+        && lastRight2 != DEFAULT
+        && lastRight1 > some
         && lastRight2 > some
         && lastWrong1 < some
         && lastWrong2 < some;
 }
 
 bool isGreen(long seconds, long lastRight, long lastWrong){
-    return lastRight > lastWrong;
+    return lastRight != DEFAULT
+        && lastRight > lastWrong;
 }
 
 int getGreen(){
@@ -78,7 +85,8 @@ int getGreen(){
 }
 
 bool isRed(long seconds, long lastRight, long lastWrong){
-    return  lastWrong > lastRight;
+    return lastWrong != DEFAULT
+        && lastWrong >= lastRight;
 }
 
 int getRed(){
@@ -144,7 +152,6 @@ void loop(){
 
 bool readRight(const int wheels[]){
     if(digitalRead(wheels[2]) == LOW){
-        Serial.println("RIGHT");
         return true;
     }
     return false;
@@ -153,7 +160,6 @@ bool readRight(const int wheels[]){
 bool readWrong(const int wheels[]){
     for(int i = 0; i<2; i++)
         if(digitalRead(wheels[i]) == LOW){
-            Serial.println("WRONG");
             return true;
         }
     return false;
