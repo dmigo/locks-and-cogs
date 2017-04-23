@@ -24,6 +24,7 @@ void setup() {
   for(int i = 0; i< letters_l; i++){
     pinMode(letters[i], INPUT_PULLUP);
   }
+  pinMode(ZERO, INPUT_PULLUP);
   
   pinMode(COUNTERCLOCKWISE, OUTPUT);
   digitalWrite(COUNTERCLOCKWISE, HIGH);  //Ну релеееешки жееееж))
@@ -73,7 +74,7 @@ bool moveTo(int destination, int direction){ // движемся к букве
 
   digitalWrite(direction, LOW);
   
-  while(digitalRead(destination) != HIGH) // ждем пока не дойдем до буквы
+  while(digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
   {
       if(readUid() != UID){
         Serial.println("RFID removed!");
@@ -93,10 +94,10 @@ void moveToZero(){
   
   digitalWrite(COUNTERCLOCKWISE, LOW);
   
-  while(digitalRead(ZERO) != HIGH) // ждем пока не дойдем до старта
-  {
+  while(digitalRead(ZERO) != LOW) // ждем пока не дойдем до старта
+  { 
   }
-  
+
   digitalWrite(COUNTERCLOCKWISE, HIGH);
 }
 
