@@ -1,11 +1,12 @@
 //todo порефакторить
 
-
+#define IR_FLICKER 500 //задержка мерцания ик
 #define UV_DELAY 1000 //задержка ультрафиолета в миллисекундах
 
 const int length = 6;//количество кнопок
 int buttons[length] = {12, 9, 6, A0, A1, A3};//список кнопок
 int irleds[length] = {11, 8, 5, 13, A2, A4};//список ик
+bool irstates[length] = {false, false, false, false, false, false}; //состояния икшек
 int uvleds[length] = {10, 7, 4, 3, 2, 0};//список ультрафиолеток
 
 int relays[2] = {A5, 1};// релешки
@@ -178,19 +179,32 @@ void getButtons(int result[]){
 }
 
 void irdrop(int i){
-  int pin = irleds[i];
-  digitalWrite(irleds[i], LOW);
+  irstates[i] = false;
   Serial.print("[ir ");
-  Serial.print(pin);
+  Serial.print(irleds[i]);
   Serial.println(" is down]");
 }
 
 void irup(int i){
-  int pin = irleds[i];
-  digitalWrite(irleds[i], HIGH);
+  irstates[i] = true;
   Serial.print("[ir ");
-  Serial.print(pin);
+  Serial.print(irleds[i]);
   Serial.println(" is up]");
+}
+
+void lightup(){  
+  for(int i; i < length; i++)
+  {
+    if(irstates[i])
+      digitalWrite(irleds[i], HIGH);
+    else
+      digitalWrite(irleds[i], LOW);
+  }
+}
+
+void shutdown(){  
+  for(int i; i < length; i++)
+      digitalWrite(irleds[i], LOW);
 }
 
 void uvblink(int i){
@@ -225,7 +239,17 @@ void setup() {
   start1();
 }
 
+long irstate = 0;
 void loop() {
+  if(!won2){
+    long newirState = millis()/IR_FLICKER;
+    if(newirState!=irstate){
+      if(newirState%2 == 1)
+        lightup();
+      else
+        shutdown();
+    }
+  }
     if(!won1){
         int desired = sequence1[index1];
         int newButton = getButton();
@@ -242,7 +266,7 @@ void loop() {
               drop1(lastButton);
               lose();
           }
-          
+
           lastButton = newButton;
         }
     }
