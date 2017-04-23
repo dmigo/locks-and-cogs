@@ -132,7 +132,16 @@ void loop(){
             greenSeconds++;
         else
             greenSeconds = 0;
+
+        if(seconds == blinkRelayOff)
+            digitalWrite(blinkRelay, HIGH);
     }
+
+if(clicks/BLINK_AFTER > lastBlinkedAt){
+    lastBlinkedAt = clicks/BLINK_AFTER;
+    digitalWrite(blinkRelay, LOW);
+    blinkRelayOff = seconds + BLINK;
+}
 
     if(isGreen(seconds, lastRight1, lastWrong1))
     {
