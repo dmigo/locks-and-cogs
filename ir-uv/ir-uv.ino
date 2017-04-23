@@ -193,16 +193,26 @@ void irup(int i){
 }
 
 void lightup(){  
+  Serial.println("lightup");
   for(int i; i < length; i++)
   {
-    if(irstates[i])
+    if(irstates[i]){
+      Serial.print("O");
+      Serial.print(i);
+      Serial.print(";");      
       digitalWrite(irleds[i], HIGH);
-    else
+    }
+    else{
+      Serial.print("X");
+      Serial.print(i);
+      Serial.print(";");      
       digitalWrite(irleds[i], LOW);
+    }
   }
 }
 
 void shutdown(){  
+  Serial.println("shutdown");
   for(int i; i < length; i++)
       digitalWrite(irleds[i], LOW);
 }
@@ -244,7 +254,9 @@ void loop() {
   if(!won2){
     long newirState = millis()/IR_FLICKER;
     if(newirState!=irstate){
-      if(newirState%2 == 1)
+      irstate = newirState;
+
+      if(irstate%2 == 1)
         lightup();
       else
         shutdown();
