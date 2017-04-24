@@ -175,20 +175,20 @@ if(clicks/BLINK_AFTER > lastBlinkedAt){
         }
     }        
 
-    if(readRight(wheels1)){
+    if(readRight(wheels1, states1)){
         lastRight1 = seconds;
         clicks++;
     }
-    if(readWrong(wheels1)){
+    if(readWrong(wheels1, states1)){
         clicks++;
         lastWrong1 = seconds;
     }        
 
-    if(readRight(wheels2)){
+    if(readRight(wheels2, states2)){
         clicks++;
         lastRight2 = seconds;
     }
-    if(readWrong(wheels2)){
+    if(readWrong(wheels2, states2)){
         clicks++;
         lastWrong2 = seconds;    
     }
@@ -198,6 +198,7 @@ bool readRight(const int wheels[], int states[]){
     int state = digitalRead(wheels[2]);
     if(state != states[2]){
         states[2] = state; 
+        Serial.println("that's right");
         return true;
     }
     return false;
@@ -208,6 +209,7 @@ bool readWrong(const int wheels[], int states[]){
         int state = digitalRead(wheels[i]);
         if(state != states[i]){
             states[i] = state;
+            Serial.println("that's wrong");
             return true;
         }
     }        
