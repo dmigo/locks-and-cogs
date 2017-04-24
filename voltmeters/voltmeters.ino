@@ -23,7 +23,9 @@
 
 const int wheels_l = 3;
 const int wheels1[wheels_l] = {2, 3, 4};
+int states1[wheels_l] = {HIGH, HIGH, HIGH};
 const int wheels2[wheels_l] = {6, 7, 8};
+int states2[wheels_l] = {HIGH, HIGH, HIGH};
 
 const int winRelay = 12;
 const int blinkRelay = 13;
@@ -192,17 +194,22 @@ if(clicks/BLINK_AFTER > lastBlinkedAt){
     }
 }
 
-bool readRight(const int wheels[]){
-    if(digitalRead(wheels[2]) == LOW){
+bool readRight(const int wheels[], int states[]){
+    int state = digitalRead(wheels[2]);
+    if(state != states[2]){
+        states[2] = state; 
         return true;
     }
     return false;
 }
 
-bool readWrong(const int wheels[]){
-    for(int i = 0; i<2; i++)
-        if(digitalRead(wheels[i]) == LOW){
+bool readWrong(const int wheels[], int states[]){
+    for(int i = 0; i<2; i++){
+        int state = digitalRead(wheels[i]);
+        if(state != states[i]){
+            states[i] = state;
             return true;
         }
+    }        
     return false;
 }
