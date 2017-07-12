@@ -49,20 +49,40 @@ class Clicker{
     long _timeout;
     long _lastClick;
     long _debounceDelay;
+    bool _lastState;
 
     long _longMillis(){
       long value = millis();
       return value;
     }
-    bool _isPressed(){
-      return digitalRead(_pin) == LOW;
+    int _getState(){
+      return digitalRead(_pin);
     }
     bool _isDebounced(){
       return _longMillis() > _lastClick + _debounceDelay;
     }
-    bool _isTimedOut(){
+    bool _isTimeout(){
       return _longMillis() > _lastClick + _timeout;
     }
+    void _handleStateChanged(bool oldState, bool newState){
+      if(oldState == LOW){
+         _lastClick = _longMillis();
+         _clicks++;
+         Console.println();
+         Console.print("[");
+         Console.print(_lastClick);
+         Console.print("]");
+         Console.print(" click! total: ");
+         Console.print(_clicks);
+         Console.println();
+      }
+      _lastState = newState;
+    }
+    void _handleTimeout(){
+      _cllicks = 0;
+      Console.println("dropping the clicks amount");
+    }
+    
   public:
     Clicker(int pin, long delayBetweenClicks, long timeout){
       _clicks = 0;
@@ -73,15 +93,17 @@ class Clicker{
 
       _pin = pin;
       pinMode(pin, INPUT_PULLUP);
+      _lastState = _getState();
     }
 
     void check(){
-      if(_isPressed() && _isDebounced()){
-         Serial.println("pressed and debounced");
-         _lastClick = _longMillis();
-         _clicks++;
-      } else if(_isTimedOut()){
-        _clicks = 0;
+      int newState = _getState();
+      if(_lastState != newState && _isDebounced()){
+        _handleStateChanged(_lastState, newState);
+      }
+
+      if(_isTimeout){
+        _handleTimeout();
       }
     }
 
