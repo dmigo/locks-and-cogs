@@ -68,19 +68,19 @@ class Clicker{
       if(oldState == LOW){
          _lastClick = _longMillis();
          _clicks++;
-         Console.println();
-         Console.print("[");
-         Console.print(_lastClick);
-         Console.print("]");
-         Console.print(" click! total: ");
-         Console.print(_clicks);
-         Console.println();
+         Serial.println();
+         Serial.print("[");
+         Serial.print(_lastClick);
+         Serial.print("]");
+         Serial.print(" click! total: ");
+         Serial.print(_clicks);
+         Serial.println();
       }
       _lastState = newState;
     }
     void _handleTimeout(){
-      _cllicks = 0;
-      Console.println("dropping the clicks amount");
+      _clicks = 0;
+      Serial.println("dropping the clicks amount");
     }
     
   public:
@@ -102,7 +102,7 @@ class Clicker{
         _handleStateChanged(_lastState, newState);
       }
 
-      if(_isTimeout){
+      if(_isTimeout()){
         _handleTimeout();
       }
     }
