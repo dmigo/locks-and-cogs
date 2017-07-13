@@ -79,8 +79,9 @@ class Clicker{
       _lastState = newState;
     }
     void _handleTimeout(){
+      if(_clicks>0)
+        Serial.println("dropping the clicks amount");
       _clicks = 0;
-      Serial.println("dropping the clicks amount");
     }
     
   public:
