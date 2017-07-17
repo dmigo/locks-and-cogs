@@ -1,9 +1,11 @@
 #define LEFT 9
 #define RIGHT 10
-#define BUTTON 5
+#define BUTTON 3
 
-#define SPIN_DELAY  1000
-
+#define SPIN_DELAY  400
+#include <Servo.h>
+Servo myservo;
+int pos = 0;
 class Motor {
   private:
     int _left;
@@ -65,7 +67,7 @@ class Clicker{
       return _longMillis() > _lastClick + _timeout;
     }
     void _handleStateChanged(bool oldState, bool newState){
-      if(oldState == LOW){
+      if(oldState == HIGH){
          _lastClick = _longMillis();
          _clicks++;
          Serial.println();
@@ -121,23 +123,25 @@ Motor* motor;
 Clicker* clicker;
 
 void setup() {
+  myservo.attach(9);
   pinMode(BUTTON, INPUT_PULLUP);
   motor = new Motor(LEFT, RIGHT);
   clicker = new Clicker(BUTTON, 500, 700);
+  
   Serial.begin(9600);
 }
 
 void loop() {
   clicker->check();
   if(!clicker->isStillWaiting()){
-    if(clicker->isAboveClicks(3)){
-      motor->spinReverse();
+    if(clicker->isAboveClicks(3)&& pos == 0){
+      myservo.write(180);
       delay(SPIN_DELAY);
-      motor->tearDown();
-    } else if (clicker->isAboveClicks(1)){
-      motor->spinRightRound();
+      pos = 1;
+    } else if (clicker->isAboveClicks(1)&& pos == 1){
+      myservo.write(0);
       delay(SPIN_DELAY);
-      motor->tearDown(); 
+      pos = 0; 
     }
   }
 }
