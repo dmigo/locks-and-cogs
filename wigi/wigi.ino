@@ -7,7 +7,7 @@
 
 #define CLOCKWISE 7 //пин релешки на движение по часовой
 #define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
- 
+
 #define ZERO 6 //пин стартового положения
 
 #define SS_PIN 10
@@ -20,52 +20,52 @@ const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCK
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // рфид ридер
 
-void setup() {  
-  for(int i = 0; i< letters_l; i++){
+void setup() {
+  for (int i = 0; i < letters_l; i++) {
     pinMode(letters[i], INPUT_PULLUP);
   }
   pinMode(ZERO, INPUT_PULLUP);
-  
+
   pinMode(COUNTERCLOCKWISE, OUTPUT);
   digitalWrite(COUNTERCLOCKWISE, HIGH);  //Ну релеееешки жееееж))
   pinMode(CLOCKWISE, OUTPUT);
   digitalWrite(CLOCKWISE, HIGH);
-  
+
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
-  }  
+  }
 
   Serial.println("Initializing...");
-  
+
   SPI.begin();            // инициализация SPI
   mfrc522.PCD_Init();     // инициализация MFRC522
-    
+
   Serial.println("Start...");
 }
 
-int readUid(){// читаем ид карточки
+int readUid() { // читаем ид карточки
   byte status;
   byte byteCount;
-  byte buffer[2]; // длина массива (16 байт + 2 байта контрольная сумма) 
-  
+  byte buffer[2]; // длина массива (16 байт + 2 байта контрольная сумма)
+
   byteCount = sizeof(buffer);
   int uidDec = 0;
   int uidDecTemp = 0;
-  status = mfrc522.PICC_RequestA(buffer, &byteCount); 
+  status = mfrc522.PICC_RequestA(buffer, &byteCount);
   if (mfrc522.PICC_ReadCardSerial()) {
-    for (byte i = 0; i < mfrc522.uid.size; i++) {  
-      uidDecTemp=mfrc522.uid.uidByte[i];
-      uidDec=uidDec*256+uidDecTemp;
+    for (byte i = 0; i < mfrc522.uid.size; i++) {
+      uidDecTemp = mfrc522.uid.uidByte[i];
+      uidDec = uidDec * 256 + uidDecTemp;
     }
 
     mfrc522.PICC_ReadCardSerial();
 
-    return uidDec;       
+    return uidDec;
   }
 }
 
-bool moveTo(int destination, int direction){ // движемся к букве
+bool moveTo(int destination, int direction) { // движемся к букве
 
   Serial.print("moving pin ");
   Serial.print(direction);
@@ -73,51 +73,56 @@ bool moveTo(int destination, int direction){ // движемся к букве
   Serial.println(destination);
 
   digitalWrite(direction, LOW);
-  
-  while(digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
+
+  while (digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
   {
-      if(readUid() != UID){
-        Serial.println("RFID removed!");
-        digitalWrite(direction, HIGH);
-        return false;
-      }
+    if (readUid() != UID) {
+      Serial.println("RFID removed!");
+      digitalWrite(direction, HIGH);
+      return false;
+    }
   }
 
   Serial.println("got to the point");
-  
+
   digitalWrite(direction, HIGH);
   return true;
 }
 
-void moveToZero(){
+void moveToZero() {
   Serial.println("moving to start");
-  
-  digitalWrite(COUNTERCLOCKWISE, LOW);
-  
-  while(digitalRead(ZERO) != LOW) // ждем пока не дойдем до старта
-  { 
-  }
 
+  int blinker = 1;
+  int interval = 7000;
+  digitalWrite(COUNTERCLOCKWISE, LOW);
+  while (digitalRead(ZERO) != LOW) // ждем пока не дойдем до старта
+  {
+    blinker++;
+    if (blinker % (interval * 2) == 0)
+      digitalWrite(COUNTERCLOCKWISE, HIGH);
+    else if (blinker % interval == 0)
+      digitalWrite(COUNTERCLOCKWISE, LOW);
+  }
   digitalWrite(COUNTERCLOCKWISE, HIGH);
 }
 
 void loop() {
-  if(!freeze){     
+  if (!freeze) {
     int uid = readUid();
     Serial.print("uid:");
     Serial.println(uid);
-  
-    if(uid == UID){
+
+    if (uid == UID) {
       Serial.println("Here comes Diana!");
-      
+
       bool moveon = true;
-      for(int i = 0; i < letters_l && moveon; i++){
+      for (int i = 0; i < letters_l && moveon; i++) {
         moveon = moveTo(letters[i], directions[i]);
         delay(DELAY);
       }
       moveToZero();
 
       freeze = true;
-    } 
+    }
   }
- }
+}
