@@ -93,7 +93,7 @@ void moveToZero() {
   Serial.println("moving to start");
 
   int blinker = 1;
-  int interval = 7000;
+  int interval = 1500;
   digitalWrite(COUNTERCLOCKWISE, LOW);
   while (digitalRead(ZERO) != LOW) // ждем пока не дойдем до старта
   {
