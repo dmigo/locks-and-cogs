@@ -8,24 +8,26 @@
 #define CLOCKWISE 7 //пин релешки на движение по часовой
 #define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
 
+#define ENCODER_1 3
+#define ENCODER_2 4
+
 #define ZERO 6 //пин стартового положения
 
 #define SS_PIN 10
 #define RST_PIN 9
 
 bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
-const int letters_l = 5; //длинна последовательности букв
-const int letters[letters_l] = {3, 4, 2, 5, 2}; // пины букв {d, i, a, n, a}
+const int letters_l = 5;
+const int letters[letters_l] = {3, 4, 2, 5, 2}; // количество щелчков для каждой из букв {d, i, a, n, a}
 const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE};
 
 MFRC522 mfrc522(SS_PIN, RST_PIN); // рфид ридер
 
 void setup() {
-  for (int i = 0; i < letters_l; i++) {
-    pinMode(letters[i], INPUT_PULLUP);
-  }
   pinMode(ZERO, INPUT_PULLUP);
-
+  pinMode(ENCODER_1, INPUT_PULLUP);
+  pinMode(ENCODER_2, INPUT_PULLUP);
+    
   pinMode(COUNTERCLOCKWISE, OUTPUT);
   digitalWrite(COUNTERCLOCKWISE, HIGH);  //Ну релеееешки жееееж))
   pinMode(CLOCKWISE, OUTPUT);
@@ -65,17 +67,31 @@ int readUid() { // читаем ид карточки
   }
 }
 
-bool moveTo(int destination, int direction) { // движемся к букве
+bool moveTo(int clicks_to_destination, int direction) { // движемся к букве
 
   Serial.print("moving pin ");
   Serial.print(direction);
-  Serial.print(" to ");
-  Serial.println(destination);
+  Serial.print(clicks_to_destination);
+  Serial.println(" clicks");
 
   digitalWrite(direction, LOW);
 
-  while (digitalRead(destination) != LOW) // ждем пока не дойдем до буквы
+  int pos = 0;
+  int lastn = LOW;
+  int n = LOW;
+  
+  while (pos < clicks_to_destination) // ждем пока не дойдем до буквы
   {
+    n = digitalRead(ENCODER_1);
+    if(lastn == LOW && n==HIGH){
+      if (digitalRead(ENCODER_2) == LOW) {
+        pos--;
+      } else {
+        pos++;
+      }
+    }
+    lastn = n;
+    
     if (readUid() != UID) {
       Serial.println("RFID removed!");
       digitalWrite(direction, HIGH);
