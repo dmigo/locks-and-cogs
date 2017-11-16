@@ -69,10 +69,10 @@ int readUid() { // читаем ид карточки
 
 bool moveTo(int clicks_to_destination, int direction) { // движемся к букве
 
-  Serial.print("moving pin ");
+  Serial.print("moving pin: ");
   Serial.print(direction);
-  Serial.print(clicks_to_destination);
-  Serial.println(" clicks");
+  Serial.print(" clicks: ");
+  Serial.println(clicks_to_destination);
 
   digitalWrite(direction, LOW);
 
