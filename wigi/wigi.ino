@@ -83,10 +83,11 @@ bool moveTo(int clicks_to_destination, int direction) { // движемся к �
   while (pos < clicks_to_destination) // ждем пока не дойдем до буквы
   {
     n = digitalRead(ENCODER_1);
-    if(lastn == LOW && n==HIGH){
+    if(lastn! = n){
       pos++;
       Serial.print("New pos ");
       Serial.println(pos);
+      sleep(100);
     }
     lastn = n;
     
