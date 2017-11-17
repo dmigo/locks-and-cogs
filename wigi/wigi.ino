@@ -2,6 +2,7 @@
 #include <MFRC522.h>
 
 #define DELAY 2100 //задержка между буквами
+#define DEBOUNCE 100 //задержка на помехи
 
 #define UID 9472  //айдишник нужной нфцшки
 
@@ -87,7 +88,7 @@ bool moveTo(int clicks_to_destination, int direction) { // движемся к �
       pos++;
       Serial.print("New pos ");
       Serial.println(pos);
-      sleep(100);
+      delay(DEBOUNCE);
     }
     lastn = n;
     
