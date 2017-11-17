@@ -37,7 +37,7 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
-
+  Serial.println("Version 1.0.1");
   Serial.println("Initializing...");
 
   SPI.begin();            // инициализация SPI
