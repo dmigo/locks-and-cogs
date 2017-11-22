@@ -33,7 +33,7 @@ void setup() {
   _rfid->onOpen(onRfidOpen);
   _rfid->onClose(onRfidClose);
   _motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE);
- // _diana = new Diana(_motor, getEncoderPosition);
+  _diana = new Diana(_motor, getEncoderPosition);
 
   Timer1.initialize(250); // инициализация таймера 1, период 250 мкс 
   Timer1.attachInterrupt(encoderInterrupt, 250); // задаем обработчик прерываний 
