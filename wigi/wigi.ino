@@ -1,144 +1,67 @@
-#include <SPI.h>
-#include <MFRC522.h>
-
-#define DELAY 2100 //задержка между буквами
-#define DEBOUNCE 100 //задержка на помехи
+#include <TimerOne.h> 
+#include <Encod_er.h>
+#include "Sensor.cpp"
+#include "Diana.cpp"
+#include "RfidLock.cpp"
 
 #define UID 9472  //айдишник нужной нфцшки
 
 #define CLOCKWISE 7 //пин релешки на движение по часовой
 #define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
 
+#define ZERO 10 //пин стартового положения
+
 #define ENCODER_1 3
 #define ENCODER_2 4
 
-#define ZERO 6 //пин стартового положения
+Encod_er encoder(ENCODER_1, ENCODER_2, 5);
 
-#define SS_PIN 10
-#define RST_PIN 9
-
-bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
-const int letters_l = 5;
-const int letters[letters_l] = {3, 4, 2, 5, 2}; // количество щелчков для каждой из букв {d, i, a, n, a}
-const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE};
-
-MFRC522 mfrc522(SS_PIN, RST_PIN); // рфид ридер
+Sensor *_zero;
+RfidLock *_rfid;
+Motor *_motor;
+Diana *_diana;
 
 void setup() {
-  pinMode(ZERO, INPUT_PULLUP);
-  pinMode(ENCODER_1, INPUT_PULLUP);
-  pinMode(ENCODER_2, INPUT_PULLUP);
-    
-  pinMode(COUNTERCLOCKWISE, OUTPUT);
-  digitalWrite(COUNTERCLOCKWISE, HIGH);  //Ну релеееешки жееееж))
-  pinMode(CLOCKWISE, OUTPUT);
-  digitalWrite(CLOCKWISE, HIGH);
-
   Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
-  Serial.println("Version 1.0.1");
+  while (!Serial) {;}
+
+  Serial.println("Version 1.0.2");
   Serial.println("Initializing...");
 
-  SPI.begin();            // инициализация SPI
-  mfrc522.PCD_Init();     // инициализация MFRC522
+  _zero = new Sensor(ZERO, 100);
+  _rfid = new RfidLock(UID);
+  _rfid->onOpen(onRfidOpen);
+  _rfid->onClose(onRfidClose);
+  _motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE);
+ // _diana = new Diana(_motor, getEncoderPosition);
+
+  Timer1.initialize(250); // инициализация таймера 1, период 250 мкс 
+  Timer1.attachInterrupt(encoderInterrupt, 250); // задаем обработчик прерываний 
 
   Serial.println("Start...");
 }
 
-int readUid() { // читаем ид карточки
-  byte status;
-  byte byteCount;
-  byte buffer[2]; // длина массива (16 байт + 2 байта контрольная сумма)
-
-  byteCount = sizeof(buffer);
-  int uidDec = 0;
-  int uidDecTemp = 0;
-  status = mfrc522.PICC_RequestA(buffer, &byteCount);
-  if (mfrc522.PICC_ReadCardSerial()) {
-    for (byte i = 0; i < mfrc522.uid.size; i++) {
-      uidDecTemp = mfrc522.uid.uidByte[i];
-      uidDec = uidDec * 256 + uidDecTemp;
-    }
-
-    mfrc522.PICC_ReadCardSerial();
-
-    return uidDec;
-  }
+void onRfidOpen(){
+  Serial.println("RFID received!");
+  _diana->speak();
 }
 
-bool moveTo(int clicks_to_destination, int direction) { // движемся к букве
-
-  Serial.print("moving pin: ");
-  Serial.print(direction);
-  Serial.print(" clicks: ");
-  Serial.println(clicks_to_destination);
-
-  digitalWrite(direction, LOW);
-
-  int pos = 0;
-  int lastn = LOW;
-  int n = LOW;
-  
-  while (pos < clicks_to_destination) // ждем пока не дойдем до буквы
-  {
-    n = digitalRead(ENCODER_1);
-    if(lastn! = n){
-      pos++;
-      Serial.print("New pos ");
-      Serial.println(pos);
-      delay(DEBOUNCE);
-    }
-    lastn = n;
-    
-    if (readUid() != UID) {
-      Serial.println("RFID removed!");
-      digitalWrite(direction, HIGH);
-      return false;
-    }
-  }
-
-  Serial.println("got to the point");
-
-  digitalWrite(direction, HIGH);
-  return true;
+void onRfidClose(){
+  Serial.println("RFID removed!");
+  _diana->signOff();
 }
 
-void moveToZero() {
-  Serial.println("moving to start");
-
-  int blinker = 1;
-  int interval = 1500;
-  digitalWrite(COUNTERCLOCKWISE, LOW);
-  while (digitalRead(ZERO) != LOW) // ждем пока не дойдем до старта
-  {
-    blinker++;
-    if (blinker % (interval * 2) == 0)
-      digitalWrite(COUNTERCLOCKWISE, HIGH);
-    else if (blinker % interval == 0)
-      digitalWrite(COUNTERCLOCKWISE, LOW);
-  }
-  digitalWrite(COUNTERCLOCKWISE, HIGH);
+int getEncoderPosition(){
+  return encoder.read();
 }
 
 void loop() {
-  if (!freeze) {
-    int uid = readUid();
-    Serial.print("uid:");
-    Serial.println(uid);
+  _rfid->check();
+  _motor->check();
+  _zero->check();
+  _diana->check();
+}
 
-    if (uid == UID) {
-      Serial.println("Here comes Diana!");
-
-      bool moveon = true;
-      for (int i = 0; i < letters_l && moveon; i++) {
-        moveon = moveTo(letters[i], directions[i]);
-        delay(DELAY);
-      }
-      moveToZero();
-
-      freeze = true;
-    }
-  }
+void encoderInterrupt() { 
+  encoder.scanState(); 
 }
