@@ -24,7 +24,7 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.0.11");
+  Serial.println("Version 1.0.12");
   Serial.println("Initializing...");
 
   _rfid = new RfidLock(UID);
@@ -59,8 +59,8 @@ void loop() {
   _rfid->check();
   _motor->check();
   _diana->check();
-  Serial.println("Encoder:");
-  Serial.println(getEncoderPosition());
+  //Serial.println("Encoder:");
+  //Serial.println(getEncoderPosition());
 }
 
 void encoderInterrupt() { 

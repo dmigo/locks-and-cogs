@@ -8,8 +8,8 @@ class RfidLock{
 private:
   rdm630 *_rfid = new rdm630(6, 0);  //TX-pin of RDM630 connected to Arduino pin 6
   unsigned long _key;
-  unsigned long _state;
-  unsigned long _stateTimestamp;
+  unsigned long _state = 0;
+  unsigned long _stateTimestamp = 0;
   bool _isOpen = false;
   void (*_onOpen)();
   void (*_onClose)();
