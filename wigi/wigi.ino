@@ -25,15 +25,15 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.0.3");
+  Serial.println("Version 1.0.4");
   Serial.println("Initializing...");
 
-  _zero = new Sensor(ZERO, 100);
+  //_zero = new Sensor(ZERO, 100);
   //_rfid = new RfidLock(UID);
   //_rfid->onOpen(onRfidOpen);
   //_rfid->onClose(onRfidClose);
-  _motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE);
-  _diana = new Diana(_motor, getEncoderPosition);
+  //_motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE);
+  //_diana = new Diana(_motor, getEncoderPosition);
 
   Timer1.initialize(250); // инициализация таймера 1, период 250 мкс 
   Timer1.attachInterrupt(encoderInterrupt, 250); // задаем обработчик прерываний 
@@ -43,12 +43,12 @@ void setup() {
 
 void onRfidOpen(){
   Serial.println("RFID received!");
-  _diana->speak();
+  //_diana->speak();
 }
 
 void onRfidClose(){
   Serial.println("RFID removed!");
-  _diana->signOff();
+  //_diana->signOff();
 }
 
 int getEncoderPosition(){
@@ -57,9 +57,9 @@ int getEncoderPosition(){
 
 void loop() {
   //_rfid->check();
-  _motor->check();
-  _zero->check();
-  _diana->check();
+  //_motor->check();
+  //_zero->check();
+  //_diana->check();
   Serial.println("Test");
   Serial.println(getEncoderPosition());
 }
