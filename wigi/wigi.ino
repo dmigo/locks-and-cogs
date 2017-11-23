@@ -24,7 +24,7 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.0.12");
+  Serial.println("Version 1.0.13");
   Serial.println("Initializing...");
 
   _rfid = new RfidLock(UID);

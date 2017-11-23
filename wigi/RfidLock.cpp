@@ -10,7 +10,6 @@ private:
   unsigned long _key;
   unsigned long _state = 0;
   unsigned long _stateTimestamp = 0;
-  bool _isOpen = false;
   void (*_onOpen)();
   void (*_onClose)();
   
@@ -38,13 +37,13 @@ private:
     return 0;
   }
 
-  void _updateState() {
-    _state = _read();
+  void _updateState(unsigned long newState) {
+    _state = newState;
     _stateTimestamp = millis();
   }
 
-  bool _stateChanged() {
-    return _read() != _state;
+  bool _stateChanged(unsigned long newState) {
+    return newState != _state;
   }
   bool _debounced() {
     return millis() > _stateTimestamp + DEBOUNCE;
@@ -58,9 +57,12 @@ public:
   }
 
   void check(){
-    if(_stateChanged() 
+    unsigned long newState = _read();
+    
+    if(_stateChanged(newState) 
     && _debounced()){
-      _updateState();
+      _updateState(newState);
+      
       if(_state == _key)
         _onOpen();
       else
