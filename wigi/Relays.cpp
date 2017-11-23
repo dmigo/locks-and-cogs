@@ -3,7 +3,7 @@
 class SimpleRelay{
   private:
   int _pin;
-  bool _state;
+  int _state = -1;
 
   void _setState(int newState){
     if(_state != newState){
@@ -16,6 +16,7 @@ class SimpleRelay{
   SimpleRelay(int pin){
     _pin = pin;
     pinMode(_pin, OUTPUT);
+    switchOff();
   }
 
   void switchOn(){
