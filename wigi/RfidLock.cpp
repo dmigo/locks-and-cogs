@@ -2,11 +2,14 @@
 #define RFID_LOCK
 #include <rdm630.h>
 
+#define DEBOUNCE 100
+
 class RfidLock{
 private:
   rdm630 *_rfid = new rdm630(6, 0);  //TX-pin of RDM630 connected to Arduino pin 6
   unsigned long _key;
-  unsigned long _uid;
+  unsigned long _state;
+  unsigned long _stateTimestamp;
   bool _isOpen = false;
   void (*_onOpen)();
   void (*_onClose)();
@@ -27,12 +30,26 @@ private:
 
     return result;
   }
+  
   unsigned long _read(){
     if(_isRfidAvailable()){
       return _getRfid();
     }
     return 0;
   }
+
+  void _updateState() {
+    _state = _read();
+    _stateTimestamp = millis();
+  }
+
+  bool _stateChanged() {
+    return _read() != _state;
+  }
+  bool _debounced() {
+    return millis() > _stateTimestamp + DEBOUNCE;
+  }
+  
   
 public:
   RfidLock(unsigned long key){
@@ -41,14 +58,11 @@ public:
   }
 
   void check(){
-    int newUid = _read();
-
-    if(newUid != _uid){
-      if(newUid == _key)
+    if(_stateChanged()){
+      if(_state == _key)
         _onOpen();
       else
         _onClose();
-      _uid = newUid;
     }
   }
 
@@ -59,7 +73,7 @@ public:
     _onClose = callback;
   }
   unsigned long getUid(){
-    return _uid;
+    return _state;
   }
 };
 
