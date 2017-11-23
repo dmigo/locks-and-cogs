@@ -16,7 +16,7 @@
 
 Encod_er encoder(ENCODER_1, ENCODER_2, 5);
 
-//Sensor *_zero;
+Sensor *_zero;
 RfidLock *_rfid;
 //Motor *_motor;
 //Diana *_diana;
@@ -25,10 +25,10 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.0.5");
+  Serial.println("Version 1.0.6");
   Serial.println("Initializing...");
 
-  //_zero = new Sensor(ZERO, 100);
+  _zero = new Sensor(ZERO, 100);
   _rfid = new RfidLock(UID);
   _rfid->onOpen(onRfidOpen);
   _rfid->onClose(onRfidClose);
@@ -60,8 +60,10 @@ int getEncoderPosition(){
 void loop() {
   _rfid->check();
   //_motor->check();
-  //_zero->check();
+  _zero->check();
   //_diana->check();
+  Serial.println("Encoder:");
+  Serial.println(getEncoderPosition());
 }
 
 void encoderInterrupt() { 
