@@ -9,7 +9,7 @@
 #define CLOCKWISE 7 //пин релешки на движение по часовой
 #define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
 
-#define ZERO 11 //пин стартового положения
+#define ZERO 12 //пин стартового положения
 
 #define ENCODER_1 3
 #define ENCODER_2 4
