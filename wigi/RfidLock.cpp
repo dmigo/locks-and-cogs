@@ -58,7 +58,9 @@ public:
   }
 
   void check(){
-    if(_stateChanged()){
+    if(_stateChanged() 
+    && _debounced()){
+      _updateState();
       if(_state == _key)
         _onOpen();
       else
