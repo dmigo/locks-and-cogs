@@ -49,6 +49,7 @@ void onRfidOpen(){
 
 void onRfidClose(){
   Serial.println("RFID removed!");
+  Serial.println(_rfid->getUid());
   //_diana->signOff();
 }
 
