@@ -29,13 +29,6 @@ private:
 
     return result;
   }
-  
-  unsigned long _read(){
-    if(_isRfidAvailable()){
-      return _getRfid();
-    }
-    return 0;
-  }
 
   void _updateState(unsigned long newState) {
     _state = newState;
@@ -57,10 +50,11 @@ public:
   }
 
   void check(){
-    unsigned long newState = _read();
-    
-    if(_stateChanged(newState) 
-    && _debounced()){
+    if(!_isRfidAvailable())
+      return;
+      
+    unsigned long newState = _getRfid();
+    if(_stateChanged(newState)){
       _updateState(newState);
       
       if(_state == _key)
