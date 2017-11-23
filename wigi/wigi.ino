@@ -16,23 +16,21 @@
 
 Encod_er encoder(ENCODER_1, ENCODER_2, 5);
 
-Sensor *_zero;
 RfidLock *_rfid;
-//Motor *_motor;
+Motor *_motor;
 //Diana *_diana;
 
 void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.0.6");
+  Serial.println("Version 1.0.7");
   Serial.println("Initializing...");
 
-  _zero = new Sensor(ZERO, 100);
   _rfid = new RfidLock(UID);
   _rfid->onOpen(onRfidOpen);
   _rfid->onClose(onRfidClose);
-  //_motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE);
+  _motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE, ZERO);
   //_diana = new Diana(_motor, getEncoderPosition);
 
   Timer1.initialize(250); // инициализация таймера 1, период 250 мкс 
@@ -59,8 +57,7 @@ int getEncoderPosition(){
 
 void loop() {
   _rfid->check();
-  //_motor->check();
-  _zero->check();
+  _motor->check();\
   //_diana->check();
   Serial.println("Encoder:");
   Serial.println(getEncoderPosition());

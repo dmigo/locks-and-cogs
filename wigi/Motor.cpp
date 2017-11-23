@@ -13,12 +13,16 @@ private:
 
 	long _startDelay = 0;
 	int _delay =0;
+  int _homeSensorPin;
 
 public:
-	Motor(int clockPin, int counterclockPin){
+	Motor(int clockPin, int counterclockPin, int homeSensorPin){
 		_clock = new SimpleRelay(clockPin);
+    _homeSensorPin = homeSensorPin;
 		_counterclock = new SimpleRelay(counterclockPin);
+   
 		_home = new BlinkingRelay(_counterclock, 500, 100);
+    pinMode(_homeSensorPin, INPUT_PULLUP);
 	}
 
 	void spinClock(int delay){
@@ -63,8 +67,12 @@ public:
 				_clock->switchOn();
 			else if(_moveCounterclock)
 				_counterclock->switchOn();
-			else if(_goHome)
-				_home->switchOn();
+			else if(_goHome){
+        if(digitalRead(_homeSensorPin) != LOW)
+          _home->switchOn();
+        else
+          stop();
+			}
 		}
 	}
 };
