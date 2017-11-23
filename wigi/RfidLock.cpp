@@ -58,6 +58,9 @@ public:
   void onClose(void (*callback)()) {
     _onClose = callback;
   }
+  unsigned long getUid(){
+    return _uid;
+  }
 };
 
 #endif
