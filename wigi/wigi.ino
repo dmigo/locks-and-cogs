@@ -43,7 +43,7 @@ void setup() {
 
 void onRfidOpen(){
   Serial.println("RFID received!");
-  Serial.println(_rfid.getUid());
+  Serial.println(_rfid->getUid());
   //_diana->speak();
 }
 
