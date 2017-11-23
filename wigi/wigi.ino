@@ -4,7 +4,7 @@
 #include "Diana.cpp"
 #include "RfidLock.cpp"
 
-#define UID 27449  //айдишник нужной нфцшки
+#define UID 10775353  //айдишник нужной нфцшки
 
 #define CLOCKWISE 7 //пин релешки на движение по часовой
 #define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
@@ -24,7 +24,7 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.0.13");
+  Serial.println("Version 1.0.14");
   Serial.println("Initializing...");
 
   _rfid = new RfidLock(UID);
