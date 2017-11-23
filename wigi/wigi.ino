@@ -9,7 +9,7 @@
 #define CLOCKWISE 7 //пин релешки на движение по часовой
 #define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
 
-#define ZERO 10 //пин стартового положения
+#define ZERO 11 //пин стартового положения
 
 #define ENCODER_1 3
 #define ENCODER_2 4
@@ -24,7 +24,7 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.0.7");
+  Serial.println("Version 1.0.8");
   Serial.println("Initializing...");
 
   _rfid = new RfidLock(UID);
