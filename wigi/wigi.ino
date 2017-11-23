@@ -16,10 +16,10 @@
 
 Encod_er encoder(ENCODER_1, ENCODER_2, 5);
 
-Sensor *_zero;
+//Sensor *_zero;
 //RfidLock *_rfid;
-Motor *_motor;
-Diana *_diana;
+//Motor *_motor;
+//Diana *_diana;
 
 void setup() {
   Serial.begin(9600);
