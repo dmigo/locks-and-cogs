@@ -4,7 +4,7 @@
 #define DELAY 2100 //задержка между буквами
 
 const int letters_l = 5;
-const int positions[letters_l] = {70, 40, 160, 250, 30}; // позиция для каждой из букв {d, i, a, n, a}
+const int positions[letters_l] = {70, 160, 40, 250, 40}; // позиция для каждой из букв {d, i, a, n, a}
 const int clockwise[letters_l] = {true, true, false, true, false};
 
 class Diana{

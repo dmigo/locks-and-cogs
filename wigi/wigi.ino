@@ -42,7 +42,7 @@ void setup() {
 }
 
 bool isHome(){
-  return digitalRead(ZERO);
+  return digitalRead(ZERO) == LOW;
 }
 
 void onRfidOpen(){
