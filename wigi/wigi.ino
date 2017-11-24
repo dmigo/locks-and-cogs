@@ -24,14 +24,16 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.1.3");
+  Serial.println("Version 1.1.5");
   Serial.println("Initializing...");
 
   _rfid = new RfidLock(UID);
   _rfid->onOpen(onRfidOpen);
   _rfid->onClose(onRfidClose);
-  _motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE, ZERO);
+  _motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE, isHome);
   _diana = new Diana(_motor, getEncoderPosition, isHome);
+  
+  pinMode(ZERO, INPUT_PULLUP);
 
   Timer1.initialize(250); // инициализация таймера 1, период 250 мкс 
   Timer1.attachInterrupt(encoderInterrupt, 250); // задаем обработчик прерываний 
@@ -40,7 +42,7 @@ void setup() {
 }
 
 bool isHome(){
-  return true;
+  return digitalRead(ZERO);
 }
 
 void onRfidOpen(){

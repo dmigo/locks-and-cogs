@@ -10,19 +10,20 @@ private:
 	bool _moveClock = false;
 	bool _moveCounterclock = false;
 	bool _goHome = false;
+ 
+  bool (*_isHome)();
 
 	long _startDelay = 0;
-	int _delay =0;
-  int _homeSensorPin;
+	int _delay = 0;
 
 public:
-	Motor(int clockPin, int counterclockPin, int homeSensorPin){
+	Motor(int clockPin, int counterclockPin, bool (*isHome)(){
 		_clock = new SimpleRelay(clockPin);
-    _homeSensorPin = homeSensorPin;
 		_counterclock = new SimpleRelay(counterclockPin);
+
+    _isHome = isHome;
    
 		_home = new BlinkingRelay(_counterclock, 100, 500);
-    pinMode(_homeSensorPin, INPUT_PULLUP);
 	}
 
 	void spinClock(int delay){
@@ -68,7 +69,7 @@ public:
 			else if(_moveCounterclock)
 				_counterclock->switchOn();
 			else if(_goHome){
-        if(digitalRead(_homeSensorPin) != LOW){
+        if(_isHome()){
           _home->switchOn();
         }
         else{

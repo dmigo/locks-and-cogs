@@ -71,6 +71,7 @@ class BlinkingRelay{
     long current = millis();
     long offset = current - _startBlinking;
     
+    Serial.println(offset);
     bool isOn = _isOn(offset);
     bool isOff = _isOff(offset);
 
