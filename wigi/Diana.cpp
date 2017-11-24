@@ -46,9 +46,11 @@ public:
 		_isSpeaking = true;
 	}
 	void signOff(){
-		_isSpeaking = false;
-		_motor->goHome(DELAY);
-    Serial.println("Shut Diana up!");
+    if(_isSpeaking){
+      _isSpeaking = false;
+      _motor->goHome(DELAY);
+      Serial.println("Shut Diana up!");
+    }
 	}
 
 	void check(){
