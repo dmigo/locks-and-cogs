@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include "Relays.cpp"
 
+#define DELAY_ON 100 // задержка на включение
+#define DELAY_OFF 500 // задержка на выключение
+
 class Motor{
 private:
 	SimpleRelay *_clock;
@@ -23,7 +26,7 @@ public:
 
     _isHome = isHome;
    
-		_home = new BlinkingRelay(_counterclock, 100, 500);
+		_home = new BlinkingRelay(_counterclock, DELAY_ON, DELAY_OFF);
 	}
 
 	void spinClock(int delay){
