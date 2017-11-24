@@ -47,14 +47,11 @@ private:
   }
 
   void _close(){
-    if(_isOpen()){
-      _onClose();
-    }
+    _onClose();
   }
 
   void _open(){
-    if(!_isOpen())
-      _onOpen();
+    _onOpen();
   }
   
 public:
