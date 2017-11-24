@@ -62,7 +62,8 @@ public:
 
   void check(){
     if(!_isRfidAvailable()){
-      if(_isLost()){
+      if(_isLost() &&
+        _state != 0){
         _updateState(0);
         _close();
       }
