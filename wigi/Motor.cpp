@@ -17,7 +17,7 @@ private:
 	int _delay = 0;
 
 public:
-	Motor(int clockPin, int counterclockPin, bool (*isHome)(){
+	Motor(int clockPin, int counterclockPin, bool (*isHome)()){
 		_clock = new SimpleRelay(clockPin);
 		_counterclock = new SimpleRelay(counterclockPin);
 

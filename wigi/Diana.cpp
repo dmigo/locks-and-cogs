@@ -12,8 +12,8 @@ private:
 	Motor * _motor;
 	int _index;
 	bool _isSpeaking;
- int (*_getPosition)();
- bool (*_isHome)();
+  int (*_getPosition)();
+  bool (*_isHome)();
 	long _letterTime;
 
 	bool _reached(int position){
