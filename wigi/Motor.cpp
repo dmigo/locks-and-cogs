@@ -73,10 +73,10 @@ public:
 				_counterclock->switchOn();
 			else if(_goHome){
         if(_isHome()){
-          _home->switchOn();
+          stop();
         }
         else{
-          stop();
+          _home->switchOn();
         }
 			}
 		}
