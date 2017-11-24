@@ -68,10 +68,14 @@ public:
 			else if(_moveCounterclock)
 				_counterclock->switchOn();
 			else if(_goHome){
-        if(digitalRead(_homeSensorPin) != LOW)
+        if(digitalRead(_homeSensorPin) != LOW){
           _home->switchOn();
-        else
+          Serial.println("Going home!");
+        }
+        else{
           stop();
+          Serial.println("Honey I'm home!");
+        }
 			}
 		}
 	}

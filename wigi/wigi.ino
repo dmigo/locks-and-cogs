@@ -24,7 +24,7 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.0.17");
+  Serial.println("Version 1.1.0");
   Serial.println("Initializing...");
 
   _rfid = new RfidLock(UID);
@@ -47,7 +47,6 @@ void onRfidOpen(){
 
 void onRfidClose(){
   Serial.println("RFID removed!");
-  Serial.println(_rfid->getUid());
   _diana->signOff();
 }
 

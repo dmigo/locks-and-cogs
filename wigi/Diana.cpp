@@ -48,6 +48,7 @@ public:
 	void signOff(){
 		_isSpeaking = false;
 		_motor->goHome(DELAY);
+    Serial.println("Shut Diana up!");
 	}
 
 	void check(){
