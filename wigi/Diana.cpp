@@ -64,7 +64,7 @@ public:
 
     if(_index>=letters_l &&
       _isHome()){
-      _speak();
+      speak();
     }
 
 		int position = _getPosition();
