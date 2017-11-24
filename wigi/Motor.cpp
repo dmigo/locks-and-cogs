@@ -70,11 +70,9 @@ public:
 			else if(_goHome){
         if(digitalRead(_homeSensorPin) != LOW){
           _home->switchOn();
-          Serial.println("Going home!");
         }
         else{
           stop();
-          Serial.println("Honey I'm home!");
         }
 			}
 		}

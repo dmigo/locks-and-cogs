@@ -74,10 +74,14 @@ class BlinkingRelay{
     bool isOn = _isOn(offset);
     bool isOff = _isOff(offset);
 
-    if(isOn)
+    if(isOn){
       _relay->switchOn();
-    else if(isOff)
+      Serial.println("blink on");
+    }
+    else if(isOff){
       _relay->switchOff();
+      Serial.println("blink off");
+    }
   }
   
   void switchOn(){

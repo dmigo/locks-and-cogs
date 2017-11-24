@@ -12,28 +12,30 @@ private:
 	Motor * _motor;
 	int _index;
 	bool _isSpeaking;
-  	int (*_getPosition)();
-  	long _letterTime;
+ int (*_getPosition)();
+ bool (*_isHome)();
+	long _letterTime;
 
-  	bool _reached(int position){
-  		if(clockwise[_index] && position>=positions[_index])
-  			return true;
-  		if(!clockwise[_index] && position<=positions[_index])
-  			return true;
-  
-  		return false;
-  	}
+	bool _reached(int position){
+		if(clockwise[_index] && position>=positions[_index])
+			return true;
+		if(!clockwise[_index] && position<=positions[_index])
+			return true;
 
-  	void _moveTo(int index){
-  		if(clockwise[index])
-  			_motor->spinClock(DELAY);
-  		else
-  			_motor->spinCounterclock(DELAY);
-  	}
+		return false;
+	}
+
+	void _moveTo(int index){
+		if(clockwise[index])
+			_motor->spinClock(DELAY);
+		else
+			_motor->spinCounterclock(DELAY);
+	}
 
 public:
-	Diana(Motor *motor, int (*getPosition)()){
+	Diana(Motor *motor, int (*getPosition)(), bool (*isHome)()){
 		_getPosition = getPosition;
+    _isHome = isHome;
 		_motor = motor;
 		_index = 0;
 		_isSpeaking = true;
