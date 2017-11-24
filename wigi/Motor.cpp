@@ -21,7 +21,7 @@ public:
     _homeSensorPin = homeSensorPin;
 		_counterclock = new SimpleRelay(counterclockPin);
    
-		_home = new BlinkingRelay(_counterclock, 500, 100);
+		_home = new BlinkingRelay(_counterclock, 100, 500);
     pinMode(_homeSensorPin, INPUT_PULLUP);
 	}
 
