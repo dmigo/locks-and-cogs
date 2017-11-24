@@ -62,18 +62,19 @@ public:
 		if(!_isSpeaking)
 			return;
 
-    if(_index>=letters_l &&
-      _isHome()){
-      speak();
+    if(_index>=letters_l){
+      if(_isHome())
+        speak();
     }
-
-		int position = _getPosition();
-		if(_reached(position)){
-			_index++;
-			if(_index<letters_l)
-				_moveTo(_index);
-			else
-				_goHome();
-		}
+    else{
+      int position = _getPosition();
+      if(_reached(position)){
+        _index++;
+        if(_index<letters_l)
+          _moveTo(_index);
+        else
+          _goHome();
+      }
+    }
 	}
 };
