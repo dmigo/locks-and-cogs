@@ -9,8 +9,6 @@
 #define CLOCKWISE 7 //пин релешки на движение по часовой
 #define COUNTERCLOCKWISE 8 //пин релешки на движение против часовой
 
-#define ZERO 12 //пин стартового положения
-
 #define ENCODER_1 3
 #define ENCODER_2 4
 
@@ -24,25 +22,19 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {;}
 
-  Serial.println("Version 1.2.6");
+  Serial.println("Version 1.3.0");
   Serial.println("Initializing...");
 
   _rfid = new RfidLock(UID);
   _rfid->onOpen(onRfidOpen);
   _rfid->onClose(onRfidClose);
-  _motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE, isHome);
-  _diana = new Diana(_motor, getEncoderPosition, isHome);
-  
-  pinMode(ZERO, INPUT_PULLUP);
+  _motor = new Motor(CLOCKWISE, COUNTERCLOCKWISE);
+  _diana = new Diana(_motor, getEncoderPosition);
 
   Timer1.initialize(250); // инициализация таймера 1, период 250 мкс 
   Timer1.attachInterrupt(encoderInterrupt, 250); // задаем обработчик прерываний 
 
   Serial.println("Start...");
-}
-
-bool isHome(){
-  return digitalRead(ZERO) == LOW;
 }
 
 void onRfidOpen(){
