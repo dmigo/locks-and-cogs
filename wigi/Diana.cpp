@@ -32,6 +32,10 @@ private:
 			_motor->spinCounterclock(DELAY);
 	}
 
+  void _goHome(){
+    _motor->goHome(DELAY);
+  }
+
 public:
 	Diana(Motor *motor, int (*getPosition)(), bool (*isHome)()){
 		_getPosition = getPosition;
@@ -50,8 +54,7 @@ public:
 	void signOff(){
     if(_isSpeaking){
       _isSpeaking = false;
-      _motor->goHome(DELAY);
-      Serial.println("Shut Diana up!");
+      _goHome();
     }
 	}
 
@@ -59,13 +62,18 @@ public:
 		if(!_isSpeaking)
 			return;
 
+    if(_index>=letters_l &&
+      _isHome()){
+      _speak();
+    }
+
 		int position = _getPosition();
 		if(_reached(position)){
 			_index++;
 			if(_index<letters_l)
 				_moveTo(_index);
 			else
-				signOff();
+				_goHome();
 		}
 	}
 };
