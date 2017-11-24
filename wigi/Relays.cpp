@@ -33,6 +33,7 @@ class BlinkingRelay{
   SimpleRelay *_relay;
   int _delayOn;
   int _delayOff;
+  bool _isRunning;
 
   long _startBlinking;
   
@@ -61,11 +62,12 @@ class BlinkingRelay{
     _delayOn = delayOn;
     _delayOff = delayOff;
 
+    _isRunning = false;
     _startBlinking = 0;
   }
   
   void check(){
-    if(_startBlinking == 0)
+    if(!_isRunning)
       return;
     
     long current = millis();
@@ -86,10 +88,15 @@ class BlinkingRelay{
   }
   
   void switchOn(){
+    if(_isRunning)
+      return;
+      
+    _isRunning = true;
     _startBlinking = millis();
   }
   
   void switchOff(){
+    _isRunning = false;
     _startBlinking = 0;
   }
 };
