@@ -63,8 +63,10 @@ public:
 			return;
 
     if(_index>=letters_l){
-      if(_isHome())
+      if(_isHome()){
+        Serial.println("Honey Im home!");
         speak();
+      }
     }
     else{
       int position = _getPosition();
@@ -72,8 +74,10 @@ public:
         _index++;
         if(_index<letters_l)
           _moveTo(_index);
-        else
+        else{
+          Serial.println("Diana finally goes home");
           _goHome();
+        }
       }
     }
 	}
