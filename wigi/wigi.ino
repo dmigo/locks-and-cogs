@@ -9,7 +9,7 @@
 
 #define ZERO 12 //пин стартового положения
 
-#define CLICKS_BEFORE_LOSE
+#define CLICKS_BEFORE_LOSE 300
 
 bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
 const int letters_l = 5; //длинна последовательности букв
@@ -43,11 +43,25 @@ void setup() {
   Serial.println("Start...");
 }
 
+unsigned long lastUid =0;
+int lastSeen=0;
 unsigned long readUid() { // читаем ид карточки
   if(_rfid->available())
-    {}
+    {
+    lastSeen=0;
+  lastUid = getUid();
+    return lastUid;
+  }
   else
-    return 0;
+    {
+    if(lastSeen<CLICKS_BEFORE_LOSE){
+      lastSeen++;
+    return lastUid;
+    }
+     else{
+     return 0;
+     }
+    }
 }
  unsigned long getUid(){
   byte data[6];
