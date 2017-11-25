@@ -9,6 +9,8 @@
 
 #define ZERO 12 //пин стартового положения
 
+#define CLICKS_BEFORE_LOSE
+
 bool freeze = false; //после одного удачного считывания выставляем в тру и больше не слушаем нфц
 const int letters_l = 5; //длинна последовательности букв
 const int letters[letters_l] = {3, 4, 2, 5, 2}; // пины букв {d, i, a, n, a}
@@ -18,7 +20,7 @@ rdm630 *_rfid = new rdm630(6, 0);  //TX-pin of RDM630 connected to Arduino pin 6
 
 void setup() {
   
-  Serial.println("Version 2.0.0");
+  Serial.println("Version 2.0.1");
   
   for (int i = 0; i < letters_l; i++) {
     pinMode(letters[i], INPUT_PULLUP);
