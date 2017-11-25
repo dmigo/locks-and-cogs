@@ -19,8 +19,7 @@ const int directions[letters_l] = {CLOCKWISE, CLOCKWISE, COUNTERCLOCKWISE, CLOCK
 rdm630 *_rfid = new rdm630(6, 0);  //TX-pin of RDM630 connected to Arduino pin 6
 
 void setup() {
-  
-  Serial.println("Version 2.0.1");
+ 
   
   for (int i = 0; i < letters_l; i++) {
     pinMode(letters[i], INPUT_PULLUP);
@@ -35,7 +34,8 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
-  }
+  } 
+  Serial.println("Version 2.0.2");
 
   Serial.println("Initializing...");
   _rfid->begin();
@@ -49,16 +49,18 @@ unsigned long readUid() { // читаем ид карточки
   if(_rfid->available())
     {
     lastSeen=0;
-  lastUid = getUid();
+  lastUid = getUid(); 
+  Serial.println(lastUid);
     return lastUid;
   }
   else
     {
     if(lastSeen<CLICKS_BEFORE_LOSE){
       lastSeen++;
+      Serial.println(lastUid);
     return lastUid;
     }
-     else{
+     else{Serial.println("wtf");
      return 0;
      }
     }
