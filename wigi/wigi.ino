@@ -44,9 +44,12 @@ void setup() {
 }
 
 unsigned long readUid() { // читаем ид карточки
-  if(!_rfid->available())
+  if(_rfid->available())
+    {}
+  else
     return 0;
-  
+}
+ unsigned long getUid(){
   byte data[6];
   byte length;
   
