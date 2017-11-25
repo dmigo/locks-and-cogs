@@ -66,6 +66,8 @@ public:
       else{
         if(_isSpeaking)
           speak();
+        else
+          _motor->stop();
       }
     }
 	}
