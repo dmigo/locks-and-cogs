@@ -56,7 +56,7 @@ unsigned long readUid() { // читаем ид карточки
   else
     {
     if(lastSeen<CLICKS_BEFORE_LOSE){
-      lastSeen++;
+      lastSeen++;Serial.println("++");
       Serial.println(lastUid);
     return lastUid;
     }
